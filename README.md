@@ -7,7 +7,7 @@ This function allows you to calculate the intergenic distance, as well as calcul
 The function takes 2 arguments as input. 
 
 - `input_gff` - path to gff file (after the bakta annotation)
-- `output_file` - output file name.
+- `output_file` - output file name
 
 As a result, the `operon_map_result` folder is created, which contains the annotation file. The file includes additional columns such as intergenic_distance_next, intergenic_distance_prev, score_operon
 
