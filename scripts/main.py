@@ -4,6 +4,7 @@ from sys import argv
 from BCBio import GFF
 
 from metrics.string import get_protein_links, predict_string
+from metrics.intergenic_distances import calculate_intergenic_dist, predict_operon_inter_dist
 
 
 def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
@@ -41,8 +42,11 @@ def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
 if __name__ == "__main__":
     _, path_to_gff, output_filename = argv
     parsed_gff_file, species_id = parse_gff(path_to_gff)
+    parsed_gff_file = pd.read_csv()
     protein_links = get_protein_links(species_id)
     string_scores_df = predict_string(parsed_gff_file, protein_links)
+    inter_dist_df = calculate_intergenic_dist(parsed_gff_file)
+    inter_dist_pred = predict_operon_inter_dist(inter_dist_df)
     string_scores_df.to_csv(
         output_filename,
         sep="\t",
