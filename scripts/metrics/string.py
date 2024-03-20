@@ -27,7 +27,7 @@ def get_protein_links(taxon_id: str) -> pd.DataFrame:
     return protein_links
 
 
-def get_score_from_df_subset(df_subset, id, threshold):
+def get_score_from_df_subset(df_subset: pd.DataFrame, id: str, threshold: int) -> bool:
     """
     Additional function for predict_string function to match
     the id of the second protein in the data subset for the first protein.
@@ -44,7 +44,9 @@ def get_score_from_df_subset(df_subset, id, threshold):
     return score >= threshold
 
 
-def predict_string(parsed_gff, protein_links, threshold=810) -> pd.DataFrame:
+def predict_string(
+    parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, threshold: int = 810
+) -> pd.DataFrame:
     """
     Predicts the presence of a gene in an operon based on a score from the STRING database at a given threshold.
 
