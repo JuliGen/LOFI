@@ -16,7 +16,7 @@ def get_protein_links(taxon_id: str) -> pd.DataFrame:
     """
     output_dir = f"results/string_protein_links/{taxon_id}"
     if not os.path.exists(output_dir):
-        os.mkdir(output_dir)
+        os.makedirs(output_dir)
 
     suffix = "protein.links.v12.0"
     url = f"https://stringdb-downloads.org/download/protein.links.v12.0/{taxon_id}.{suffix}.txt.gz"
