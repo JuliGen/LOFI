@@ -3,7 +3,7 @@ import pandas as pd
 from sys import argv
 from BCBio import GFF
 
-from scripts.metrics.string import get_protein_links, predict_string
+from metrics.string import get_protein_links, predict_string
 
 
 def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
