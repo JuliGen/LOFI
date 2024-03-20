@@ -26,10 +26,10 @@ def calculate_intergenic_dist(parsed_gff: pd.DataFrame):
     df_inter_dist['intergenic_distance_next'] = np.where(df_inter_dist.intergenic_distance_next < 0, 0,
                                                          df_inter_dist.intergenic_distance_next)
     # Dividing the observed states into categories
-    # FIXME
     df_inter_dist['cat_dist'] = pd.cut(df_inter_dist['intergenic_distance_next'],
                                        [i for i in range(-1, 800, 15)] + [10000],
                                        labels=[i for i in range(54)])
+
     return df_inter_dist
 
 
@@ -47,6 +47,6 @@ def predict_operon_inter_dist(df_inter_dist: pd.DataFrame):
     model.emissionprob_ = np.load('../data/matrix_emission_15.npy')  # initialize emission matrix
 
     obs_states = np.array(df_inter_dist.cat_dist.values).reshape(-1, 1)
-    # hid_states = pd.Series(model.predict(obs_states)).replace(0, 'Operon').replace(1, 'No_operon')
-    hid_states = model.predict_proba(obs_states)
+    hid_states = pd.Series(model.predict(obs_states)).replace(0, 'Operon').replace(1, 'No_operon')
+
     return hid_states
