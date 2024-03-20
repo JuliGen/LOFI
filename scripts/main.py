@@ -1,6 +1,9 @@
 import pandas as pd
 
+from sys import argv
 from BCBio import GFF
+
+from scripts.metrics.string import get_protein_links, predict_string
 
 
 def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
@@ -33,3 +36,15 @@ def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
     parsed_gff = pd.DataFrame(data=info, columns=columns)
 
     return parsed_gff, taxon_id
+
+
+if __name__ == "__main__":
+    _, path_to_gff, output_filename = argv
+    parsed_gff_file, species_id = parse_gff(path_to_gff)
+    protein_links = get_protein_links(species_id)
+    string_scores_df = predict_string(parsed_gff_file, protein_links)
+    string_scores_df.to_csv(
+        output_filename,
+        sep="\t",
+        encoding="utf-8",
+    )
