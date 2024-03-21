@@ -21,7 +21,7 @@ def get_protein_links(taxon_id: str) -> pd.DataFrame:
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
         wget.download(url, out=output_dir, bar=None)
-    
+
         with gzip.open(f"{output_dir}/{taxon_id}.{suffix}.txt.gz", "rb") as in_file:
             with open(f"{output_dir}/{taxon_id}.{suffix}.txt", "wb") as out_file:
                 shutil.copyfileobj(in_file, out_file)
@@ -50,16 +50,16 @@ def get_score_from_df_subset(df_subset: pd.DataFrame, id: str, threshold: int) -
     return score >= threshold
 
 
-def predict_string(parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, threshold: int = 810) -> pd.DataFrame:
+def predict_string(parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, threshold: int = 810) -> pd.Series:
     """
     Predicts the presence of a gene in an operon based on a score from the STRING database at a given threshold.
 
     :param parsed_gff: parsed file.gff with annotation: the result of the parse_gff function
     :param protein_links: pd.DataFrame with protein combined scores: the result of get_protein_links function
     :param threshold: threshold for predicting operonicity based on a score from the STRING database
-    :return: pd.DataFrame with predictions for each gene
+    :return: pd.Series with predictions for each gene
     """
-    df_predict = pd.DataFrame(columns=["gene", "predict"])
+    predictions = []
     df_length = parsed_gff.shape[0]
     threshold = threshold
 
@@ -72,7 +72,7 @@ def predict_string(parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, thresh
         if score_prev:
             operon_predict = 1
         else:
-            # take into account the ring structure of the bacterial chromosome
+            # Take into account the ring structure of the bacterial chromosome
             if n_id == parsed_gff.shape[0] - 1:
                 id_next = parsed_gff.locus_name.iloc[0]
             else:
@@ -81,6 +81,6 @@ def predict_string(parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, thresh
             score_next = get_score_from_df_subset(df_subset, id_next, threshold)
             operon_predict = 1 if score_next else 0
 
-        df_predict.loc[len(df_predict.index)] = [id_cur, operon_predict]
+        predictions.append(operon_predict)
 
-    return df_predict
+    return pd.Series(predictions)
