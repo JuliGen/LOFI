@@ -5,7 +5,7 @@
 
 Unfortunately, the tool <u>does not currently work</u> on the **macOS** operating system.
 
-All performance tests were carried out on **Ubuntu 22.04 LTS**
+All performance tests were carried out on **Ubuntu 22.04 LTS**.
 
 ## Description
 
@@ -28,7 +28,7 @@ cd OperonMapper
 Create mamba environment from `environment.yaml` and activate it:
 
 ```shell
-mamba env create environment.yaml && \
+mamba env create -f environment.yaml && \
 mamba activate operonmapper
 ```
 
