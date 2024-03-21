@@ -22,7 +22,14 @@ Clone this repo and go to created folder:
 
 ```shell
 git clone git@github.com:JuliGen/OperonMapper.git && \
-cd BI_Practice_Project_6
+cd OperonMapper
+```
+
+Create mamba environment from `environment.yaml` and activate it:
+
+```shell
+mamba env create environment.yaml && \
+mamba activate operonmapper
 ```
 
 ## Usage
