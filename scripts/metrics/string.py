@@ -68,9 +68,10 @@ def predict_string(parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, thresh
         id_prev = parsed_gff.locus_name.iloc[n_id - 1]
         df_subset = protein_links.query("protein1 == @id_cur")
 
+        # 0 - operon, 1 - non_operon
         score_prev = get_score_from_df_subset(df_subset, id_prev, threshold)
         if score_prev:
-            operon_predict = 1
+            operon_predict = 0
         else:
             # Take into account the ring structure of the bacterial chromosome
             if n_id == parsed_gff.shape[0] - 1:
@@ -79,7 +80,7 @@ def predict_string(parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, thresh
                 id_next = parsed_gff.locus_name.iloc[n_id + 1]
 
             score_next = get_score_from_df_subset(df_subset, id_next, threshold)
-            operon_predict = 1 if score_next else 0
+            operon_predict = 0 if score_next else 1
 
         predictions.append(operon_predict)
 
