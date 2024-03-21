@@ -28,8 +28,8 @@ def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
                     int(feature.location.start) + 1,
                     int(feature.location.end),
                     "+" if feature.location.strand == 1 else "-",
-                    "".join(feature.qualifiers["gene"]),
-                    feature.id.split("-")[1],
+                    "".join(feature.qualifiers["Name"]),
+                    "".join(feature.qualifiers["locus_tag"]).replace("_", "")
                 ]
             )
     handle.close()
@@ -80,6 +80,8 @@ def final_prediction(*data: Any) -> pd.DataFrame:
 if __name__ == "__main__":
     _, path_to_gff, output_filename = argv
 
+    print("Data processing...")
+
     # Parsing gff file
     parsed_gff_file, species_id = parse_gff(path_to_gff)
 
@@ -99,3 +101,5 @@ if __name__ == "__main__":
         sep="\t",
         encoding="utf-8",
     )
+
+    print("Job done!")

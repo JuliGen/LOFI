@@ -28,7 +28,9 @@ def get_protein_links(taxon_id: str) -> pd.DataFrame:
 
     protein_links = pd.read_csv(f"{output_dir}/{taxon_id}.{suffix}.txt", sep=" ")
     protein_links.protein1 = protein_links.protein1.str.replace(taxon_id + ".", "")
+    protein_links.protein1 = protein_links.protein1.str.replace("_", "")
     protein_links.protein2 = protein_links.protein2.str.replace(taxon_id + ".", "")
+    protein_links.protein2 = protein_links.protein2.str.replace("_", "")
 
     return protein_links
 
