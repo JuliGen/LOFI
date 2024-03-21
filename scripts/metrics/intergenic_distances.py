@@ -53,9 +53,9 @@ def predict_operon_inter_dist(df_inter_dist: pd.DataFrame) -> pd.Series:
     model = hmm.CategoricalHMM(n_components=2, algorithm="map")  # build model (lib hmm learn), forward-backward
     model.startprob_ = np.array([0.5, 0.5])  # initialize start probability
     model.transmat_ = np.array([[0.72143634, 0.27856366], [0.19284369, 0.80715631]])  # initialize transition matrix
-    model.emissionprob_ = np.load("../data/matrix_emission_15.npy")  # initialize emission matrix
+    model.emissionprob_ = np.load("data/matrix_emission_15.npy")  # initialize emission matrix
 
     obs_states = np.array(df_inter_dist.cat_dist.values).reshape(-1, 1)
-    hid_states = pd.Series(model.predict(obs_states)).replace(0, "Operon").replace(1, "No_operon")
+    hid_states = pd.Series(model.predict(obs_states))
 
     return hid_states
