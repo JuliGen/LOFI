@@ -2,6 +2,7 @@ import pandas as pd
 
 from sys import argv
 from BCBio import GFF
+from typing import Any
 
 from metrics.string import get_protein_links, predict_string
 from metrics.intergenic_distances import calculate_intergenic_dist, predict_operon_inter_dist
@@ -39,14 +40,61 @@ def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
     return parsed_gff, taxon_id
 
 
+def final_prediction(*data: Any) -> pd.DataFrame:
+    """
+    Takes parsed gff table and results from various metrics to predict operonicity for each gene.
+    :param data: parsed gff table and metrics
+    :return: table with predictions
+    """
+    df, inter_dist, string = data
+
+    prediction = []
+    for n_id in range(df.shape[0]):
+        inter_dist_value = inter_dist[n_id]
+        string_value = string[n_id]
+
+        if inter_dist_value == string_value:
+            if inter_dist_value == 0:
+                prediction.append("operon")
+            else:
+                prediction.append("non_operon")
+        elif string_value == 0:  # string > inter_dist_value
+            prediction.append("operon")
+        else:
+            prediction.append("non_operon")
+
+    final_predictions = pd.DataFrame(
+        {
+            "contig": df.contig,
+            "locus_name": df.locus_name,
+            "gene_name": df.gene_name,
+            "inter_dist": inter_dist,
+            "string": string,
+            "prediction": prediction,
+        }
+    )
+
+    return final_predictions
+
+
 if __name__ == "__main__":
     _, path_to_gff, output_filename = argv
+
+    # Parsing gff file
     parsed_gff_file, species_id = parse_gff(path_to_gff)
-    protein_links = get_protein_links(species_id)
-    string_scores_df = predict_string(parsed_gff_file, protein_links)
+
+    # Predictions for intergenic distance metric
     inter_dist_df = calculate_intergenic_dist(parsed_gff_file)
-    inter_dist_pred = predict_operon_inter_dist(inter_dist_df)
-    string_scores_df.to_csv(
+    inter_dist_predictions = predict_operon_inter_dist(inter_dist_df)
+
+    # Predictions for STRING metric
+    protein_links = get_protein_links(species_id)
+    string_predictions = predict_string(parsed_gff_file, protein_links)
+
+    # Combining all metrics into one table
+    df_prediction = final_prediction(parsed_gff_file, inter_dist_predictions, string_predictions)
+
+    df_prediction.to_csv(
         output_filename,
         sep="\t",
         encoding="utf-8",
