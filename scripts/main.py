@@ -5,31 +5,38 @@ from BCBio import GFF
 from typing import Any
 
 from metrics.string import get_protein_seqs_links, predict_string
-from metrics.intergenic_distances import calculate_intergenic_dist, predict_operon_inter_dist
+from metrics.intergenic_distances import (
+    calculate_intergenic_dist,
+    predict_operon_inter_dist,
+)
 
 
-def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
+def parse_gff(path: str) -> pd.DataFrame:
     """
     Parses file.gff from given path.
     :param path: path to file
-    :return: pd.DataFrame with the columns necessary for subsequent analysis; taxon_id for species
+    :return: pd.DataFrame with the columns necessary for subsequent analysis
     """
-    taxon_id = ""
     info = []
-    limit_info = dict(gff_type=["gene"])
+    limit_info = dict(gff_type=["CDS"])
 
     handle = open(path)
     for record in GFF.parse(handle, limit_info=limit_info):
-        taxon_id = record.annotations["species"][0].split("=")[-1]  # FIXME
         for feature in record.features:
+
+            try:
+                gene_name = "".join(feature.qualifiers["gene"])
+            except KeyError:
+                gene_name = ""
+
             info.append(
                 [
                     record.id,
                     int(feature.location.start) + 1,
                     int(feature.location.end),
                     "+" if feature.location.strand == 1 else "-",
-                    "".join(feature.qualifiers["Name"]),
-                    "".join(feature.qualifiers["locus_tag"]).replace("_", "")
+                    gene_name,
+                    "".join(feature.qualifiers["locus_tag"]),
                 ]
             )
     handle.close()
@@ -37,7 +44,7 @@ def parse_gff(path: str) -> tuple[pd.DataFrame, str]:
     columns = ["contig", "start", "end", "strand", "gene_name", "locus_name"]
     parsed_gff = pd.DataFrame(data=info, columns=columns)
 
-    return parsed_gff, taxon_id
+    return parsed_gff
 
 
 def final_prediction(*data: Any) -> pd.DataFrame:
@@ -94,7 +101,9 @@ if __name__ == "__main__":
     string_predictions = predict_string(parsed_gff_file, protein_links)
 
     # Combining all metrics into one table
-    df_prediction = final_prediction(parsed_gff_file, inter_dist_predictions, string_predictions)
+    df_prediction = final_prediction(
+        parsed_gff_file, inter_dist_predictions, string_predictions
+    )
 
     df_prediction.to_csv(
         output_filename,
