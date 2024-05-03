@@ -120,23 +120,20 @@ def predict_string(
             ).target_accession.iloc[0]
         except IndexError:
             continue
+
+        df_subset = protein_links.query("protein1 == @id_cur_string")
+
         id_prev = parsed_gff.locus_name.iloc[n_id - 1]
         try:
             id_prev_string = diamond_result_filtered.query(
                 "query_accession == @id_prev"
             ).target_accession.iloc[0]
         except IndexError:
-            check_prev = False
+            score_prev = False
         else:
-            check_prev = True
-        df_subset = protein_links.query("protein1 == @id_cur_string")
+            score_prev = get_score_from_df_subset(df_subset, id_prev_string, threshold)
 
         # 1 - operon, 0 - non_operon
-        if check_prev:
-            score_prev = get_score_from_df_subset(df_subset, id_prev_string, threshold)
-        else:
-            score_prev = False
-
         if score_prev:
             operon_predict = 1
         else:
@@ -145,20 +142,17 @@ def predict_string(
                 id_next = parsed_gff.locus_name.iloc[0]
             else:
                 id_next = parsed_gff.locus_name.iloc[n_id + 1]
+
             try:
                 id_next_string = diamond_result_filtered.query(
                     "query_accession == @id_next"
                 ).target_accession.iloc[0]
             except IndexError:
-                check_next = False
+                score_next = False
             else:
-                check_next = True
-            if check_next:
                 score_next = get_score_from_df_subset(
                     df_subset, id_next_string, threshold
                 )
-            else:
-                score_next = False
             operon_predict = 1 if score_next else 0
 
             predictions.append(operon_predict)
