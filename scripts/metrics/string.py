@@ -7,30 +7,48 @@ import numpy as np
 import pandas as pd
 
 
-def get_protein_links(taxon_id: str) -> pd.DataFrame:
+def get_protein_seqs_links(taxon_id: int) -> pd.DataFrame:
     """
-    Downloads and unzips a protein score table from the STRING database.
+    Downloads and unzips a protein score table and protein sequences
+    for provided taxon_id from the STRING database.
 
     :param taxon_id: taxon_id for species
     :return: pd.DataFrame with protein combined scores
     """
-    suffix = "protein.links.v12.0"
-    output_dir = f"results/string_protein_links/{taxon_id}"
-    url = f"https://stringdb-downloads.org/download/protein.links.v12.0/{taxon_id}.{suffix}.txt.gz"
+    taxon_id = taxon_id
+
+    db_version = "v12.0"
+    keywords = [["sequences", "fa"], ["links", "txt"]]
+    output_dir = f"results/string_files/{taxon_id}"
+
+    urls = []
+
+    for keyword in keywords:
+        urls.append(
+            f"https://stringdb-downloads.org/download/protein.{keyword[0]}.{db_version}/"
+            f"{taxon_id}.protein.{keyword[0]}.{db_version}.{keyword[1]}.gz"
+        )
 
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
-        wget.download(url, out=output_dir, bar=None)
 
-        with gzip.open(f"{output_dir}/{taxon_id}.{suffix}.txt.gz", "rb") as in_file:
-            with open(f"{output_dir}/{taxon_id}.{suffix}.txt", "wb") as out_file:
-                shutil.copyfileobj(in_file, out_file)
+        for url in urls:
+            wget.download(url, out=output_dir, bar=None)
 
-    protein_links = pd.read_csv(f"{output_dir}/{taxon_id}.{suffix}.txt", sep=" ")
-    protein_links.protein1 = protein_links.protein1.str.replace(taxon_id + ".", "")
-    protein_links.protein1 = protein_links.protein1.str.replace("_", "")
-    protein_links.protein2 = protein_links.protein2.str.replace(taxon_id + ".", "")
-    protein_links.protein2 = protein_links.protein2.str.replace("_", "")
+        for keyword in keywords:
+            with gzip.open(
+                f"{output_dir}/{taxon_id}.protein.{keyword[0]}.{db_version}.{keyword[1]}.gz",
+                "rb",
+            ) as in_file:
+                with open(
+                    f"{output_dir}/{taxon_id}.protein.{keyword[0]}.{db_version}.{keyword[1]}",
+                    "wb",
+                ) as out_file:
+                    shutil.copyfileobj(in_file, out_file)
+
+    protein_links = pd.read_csv(
+        f"{output_dir}/{taxon_id}.protein.links.{db_version}.txt", sep=" "
+    )
 
     return protein_links
 
@@ -52,7 +70,9 @@ def get_score_from_df_subset(df_subset: pd.DataFrame, id: str, threshold: int) -
     return score >= threshold
 
 
-def predict_string(parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, threshold: int = 810) -> pd.Series:
+def predict_string(
+    parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, threshold: int = 810
+) -> pd.Series:
     """
     Predicts the presence of a gene in an operon based on a score from the STRING database at a given threshold.
 

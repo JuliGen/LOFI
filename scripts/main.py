@@ -4,7 +4,7 @@ from sys import argv
 from BCBio import GFF
 from typing import Any
 
-from metrics.string import get_protein_links, predict_string
+from metrics.string import get_protein_seqs_links, predict_string
 from metrics.intergenic_distances import calculate_intergenic_dist, predict_operon_inter_dist
 
 
@@ -90,7 +90,7 @@ if __name__ == "__main__":
     inter_dist_predictions = predict_operon_inter_dist(inter_dist_df)
 
     # Predictions for STRING metric
-    protein_links = get_protein_links(species_id)
+    protein_links = get_protein_seqs_links(species_id)
     string_predictions = predict_string(parsed_gff_file, protein_links)
 
     # Combining all metrics into one table
