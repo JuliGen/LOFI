@@ -1,13 +1,16 @@
+import os.path
+
 import pandas as pd
+import argparse
 
 from sys import argv
 from BCBio import GFF
 from typing import Any
 
-from metrics.string import get_protein_seqs_links, predict_string
-from metrics.intergenic_distances import (
-    calculate_intergenic_dist,
-    predict_operon_inter_dist,
+from metrics.string import (
+    get_protein_seqs_links,
+    filter_diamond_results,
+    predict_string,
 )
 
 
@@ -84,31 +87,54 @@ def final_prediction(*data: Any) -> pd.DataFrame:
     return final_predictions
 
 
+def parse_args():
+    parser = argparse.ArgumentParser(
+        usage="main.py --genome GENOME.FNA --taxid TAXON_ID",
+        description="""TODO""",
+    )
+    parser.add_argument("--taxid", nargs="?", help="taxon_id")
+    parser.add_argument("--genome", nargs="?", help="genome.fna")
+
+    return parser.parse_args()
+
+
 if __name__ == "__main__":
-    _, path_to_gff, output_filename = argv
+    genome = parse_args().genome
+    taxon_id = parse_args().taxid
 
-    print("Data processing...")
-
-    # Parsing gff file
-    parsed_gff_file, species_id = parse_gff(path_to_gff)
-
-    # Predictions for intergenic distance metric
-    inter_dist_df = calculate_intergenic_dist(parsed_gff_file)
-    inter_dist_predictions = predict_operon_inter_dist(inter_dist_df)
-
-    # Predictions for STRING metric
-    protein_links = get_protein_seqs_links(species_id)
-    string_predictions = predict_string(parsed_gff_file, protein_links)
-
-    # Combining all metrics into one table
-    df_prediction = final_prediction(
-        parsed_gff_file, inter_dist_predictions, string_predictions
+    protein_links = get_protein_seqs_links(taxon_id)
+    parsed_gff = parse_gff(f"results/{taxon_id}/bakta/{genome}.gff3")
+    diamond_result_filtered = filter_diamond_results(
+        f"results/{taxon_id}/diamond/{taxon_id}.tsv"
     )
+    predictions = predict_string(parsed_gff, diamond_result_filtered, protein_links)
+    print(predictions)
 
-    df_prediction.to_csv(
-        output_filename,
-        sep="\t",
-        encoding="utf-8",
-    )
-
-    print("Job done!")
+# if __name__ == "__main__":
+#     _, path_to_gff, output_filename = argv
+#
+#     print("Data processing...")
+#
+#     # Parsing gff file
+#     parsed_gff_file, species_id = parse_gff(path_to_gff)
+#
+#     # Predictions for intergenic distance metric
+#     inter_dist_df = calculate_intergenic_dist(parsed_gff_file)
+#     inter_dist_predictions = predict_operon_inter_dist(inter_dist_df)
+#
+#     # Predictions for STRING metric
+#     protein_links = get_protein_seqs_links(species_id)
+#     string_predictions = predict_string(parsed_gff_file, protein_links)
+#
+#     # Combining all metrics into one table
+#     df_prediction = final_prediction(
+#         parsed_gff_file, inter_dist_predictions, string_predictions
+#     )
+#
+#     df_prediction.to_csv(
+#         output_filename,
+#         sep="\t",
+#         encoding="utf-8",
+#     )
+#
+#     print("Job done!")
