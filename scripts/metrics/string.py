@@ -119,6 +119,7 @@ def predict_string(
                 "query_accession == @id_cur"
             ).target_accession.iloc[0]
         except IndexError:
+            predictions.append(0)
             continue
 
         df_subset = protein_links.query("protein1 == @id_cur_string")
@@ -129,7 +130,7 @@ def predict_string(
                 "query_accession == @id_prev"
             ).target_accession.iloc[0]
         except IndexError:
-            score_prev = False
+            score_prev = False  #TODO
         else:
             score_prev = get_score_from_df_subset(df_subset, id_prev_string, threshold)
 
@@ -155,6 +156,6 @@ def predict_string(
                 )
             operon_predict = 1 if score_next else 0
 
-            predictions.append(operon_predict)
+        predictions.append(operon_predict)
 
     return pd.Series(predictions)
