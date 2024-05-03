@@ -53,6 +53,29 @@ def get_protein_seqs_links(taxon_id: int) -> pd.DataFrame:
     return protein_links
 
 
+def filter_diamond_results(path: str):
+    column_names = [
+        "query_accession",
+        "target_accession",
+        "sequence_identity",
+        "length",
+        "mismatches",
+        "gap_openings",
+        "query_start",
+        "query_end",
+        "target_start",
+        "target_end",
+        "e_value",
+        "bit_score",
+    ]
+    diamond_result = pd.read_csv(path, sep="\t", header=None, names=column_names)
+    diamond_result_filtered = diamond_result.loc[
+        diamond_result.groupby("query_accession")["sequence_identity"].idxmax()
+    ]
+
+    return diamond_result_filtered
+
+
 def get_score_from_df_subset(df_subset: pd.DataFrame, id: str, threshold: int) -> bool:
     """
     Additional function for predict_string function to match
@@ -71,39 +94,73 @@ def get_score_from_df_subset(df_subset: pd.DataFrame, id: str, threshold: int) -
 
 
 def predict_string(
-    parsed_gff: pd.DataFrame, protein_links: pd.DataFrame, threshold: int = 810
+    parsed_gff: pd.DataFrame,
+    diamond_result_filtered: pd.DataFrame,
+    protein_links: pd.DataFrame,
+    threshold: int = 810,
 ) -> pd.Series:
     """
     Predicts the presence of a gene in an operon based on a score from the STRING database at a given threshold.
 
     :param parsed_gff: parsed file.gff with annotation: the result of the parse_gff function
+    :param diamond_result_filtered:
     :param protein_links: pd.DataFrame with protein combined scores: the result of get_protein_links function
     :param threshold: threshold for predicting operonicity based on a score from the STRING database
     :return: pd.Series with predictions for each gene
     """
+    # TODO пока что предполагается, что контиги в геномной последовательности расположены в правильном порядке
     predictions = []
     df_length = parsed_gff.shape[0]
-    threshold = threshold
 
     for n_id in range(df_length):
         id_cur = parsed_gff.locus_name.iloc[n_id]
+        try:
+            id_cur_string = diamond_result_filtered.query(
+                "query_accession == @id_cur"
+            ).target_accession.iloc[0]
+        except IndexError:
+            continue
         id_prev = parsed_gff.locus_name.iloc[n_id - 1]
-        df_subset = protein_links.query("protein1 == @id_cur")
+        try:
+            id_prev_string = diamond_result_filtered.query(
+                "query_accession == @id_prev"
+            ).target_accession.iloc[0]
+        except IndexError:
+            check_prev = False
+        else:
+            check_prev = True
+        df_subset = protein_links.query("protein1 == @id_cur_string")
 
-        # 0 - operon, 1 - non_operon
-        score_prev = get_score_from_df_subset(df_subset, id_prev, threshold)
+        # 1 - operon, 0 - non_operon
+        if check_prev:
+            score_prev = get_score_from_df_subset(df_subset, id_prev_string, threshold)
+        else:
+            score_prev = False
+
         if score_prev:
-            operon_predict = 0
+            operon_predict = 1
         else:
             # Take into account the ring structure of the bacterial chromosome
             if n_id == parsed_gff.shape[0] - 1:
                 id_next = parsed_gff.locus_name.iloc[0]
             else:
                 id_next = parsed_gff.locus_name.iloc[n_id + 1]
+            try:
+                id_next_string = diamond_result_filtered.query(
+                    "query_accession == @id_next"
+                ).target_accession.iloc[0]
+            except IndexError:
+                check_next = False
+            else:
+                check_next = True
+            if check_next:
+                score_next = get_score_from_df_subset(
+                    df_subset, id_next_string, threshold
+                )
+            else:
+                score_next = False
+            operon_predict = 1 if score_next else 0
 
-            score_next = get_score_from_df_subset(df_subset, id_next, threshold)
-            operon_predict = 0 if score_next else 1
-
-        predictions.append(operon_predict)
+            predictions.append(operon_predict)
 
     return pd.Series(predictions)
