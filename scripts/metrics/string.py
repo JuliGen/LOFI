@@ -19,7 +19,7 @@ def get_protein_seqs_links(taxon_id: int) -> pd.DataFrame:
 
     db_version = "v12.0"
     keywords = [["sequences", "fa"], ["links", "txt"]]
-    output_dir = f"results/string_files/{taxon_id}"
+    output_dir = f"results/{taxon_id}/string"
 
     urls = []
 
