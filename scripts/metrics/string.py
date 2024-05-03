@@ -15,12 +15,9 @@ def get_protein_seqs_links(taxon_id: int) -> pd.DataFrame:
     :param taxon_id: taxon_id for species
     :return: pd.DataFrame with protein combined scores
     """
-    taxon_id = taxon_id
-
     db_version = "v12.0"
     keywords = [["sequences", "fa"], ["links", "txt"]]
     output_dir = f"results/{taxon_id}/string"
-
     urls = []
 
     for keyword in keywords:
@@ -29,22 +26,21 @@ def get_protein_seqs_links(taxon_id: int) -> pd.DataFrame:
             f"{taxon_id}.protein.{keyword[0]}.{db_version}.{keyword[1]}.gz"
         )
 
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
+    os.makedirs(output_dir, exist_ok=True)
 
-        for url in urls:
-            wget.download(url, out=output_dir, bar=None)
+    for url in urls:
+        wget.download(url, out=output_dir, bar=None)
 
-        for keyword in keywords:
-            with gzip.open(
-                f"{output_dir}/{taxon_id}.protein.{keyword[0]}.{db_version}.{keyword[1]}.gz",
-                "rb",
-            ) as in_file:
-                with open(
-                    f"{output_dir}/{taxon_id}.protein.{keyword[0]}.{db_version}.{keyword[1]}",
-                    "wb",
-                ) as out_file:
-                    shutil.copyfileobj(in_file, out_file)
+    for keyword in keywords:
+        with gzip.open(
+            f"{output_dir}/{taxon_id}.protein.{keyword[0]}.{db_version}.{keyword[1]}.gz",
+            "rb",
+        ) as in_file:
+            with open(
+                f"{output_dir}/{taxon_id}.protein.{keyword[0]}.{db_version}.{keyword[1]}",
+                "wb",
+            ) as out_file:
+                shutil.copyfileobj(in_file, out_file)
 
     protein_links = pd.read_csv(
         f"{output_dir}/{taxon_id}.protein.links.{db_version}.txt", sep=" "
@@ -130,7 +126,7 @@ def predict_string(
                 "query_accession == @id_prev"
             ).target_accession.iloc[0]
         except IndexError:
-            score_prev = False  #TODO
+            score_prev = False  # TODO
         else:
             score_prev = get_score_from_df_subset(df_subset, id_prev_string, threshold)
 
