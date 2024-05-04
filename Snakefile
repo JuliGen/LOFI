@@ -6,6 +6,36 @@ rule download_db_light:  # DONE
         "bakta_db download --output databases/ --type light"
 
 
+# Скачивается очень долго, поэтому с диска нужно сделать
+# rule download_db_for_kofam_scan:
+#     output:
+#         "databases/ko_list.gz",
+#         "databases/profiles.tar.gz"
+#     run:
+#         shell("wget ftp://ftp.genome.jp/pub/db/kofam/ko_list.gz -P databases/")
+#         shell("wget ftp://ftp.genome.jp/pub/db/kofam/profiles.tar.gz -P databases/")
+
+
+# snakemake --cores=all -p databases/ko_list
+rule get_ko_list:  # DONE
+    input:
+        "databases/ko_list.gz"
+    output:
+        "databases/ko_list"
+    shell:
+        "gunzip {input} -c > {output} && rm {input}"
+
+
+# snakemake --cores=all -p databases/profiles
+rule get_profiles:  # DONE
+    input:
+        "databases/profiles.tar.gz"
+    output:
+        directory("databases/profiles")
+    run:
+        shell("tar -xzf {input} -C databases/ && rm {input}")
+
+
 # snakemake --cores=all -p results/511145/string/511145.protein.links.v12.0.txt
 rule download_string_files:  # DONE
     output:  # 4 files in total
@@ -70,14 +100,14 @@ rule filter_diamond_results: # DONE
         "python3 scripts/preprocessing/filter_diamond_results.py --input {input} --output {output}"
 
 
-# snakemake --cores=all -p results/511145/string/511145_GCF_000005845.2_ASM584v2_genomic_string_scores.tsv
+# snakemake --cores=all -p results/511145/predictions/temp_dir/511145_GCF_000005845.2_ASM584v2_genomic_string_scores.tsv
 rule get_string_scores:  # DONE
     input:
         parsed_gff="results/{taxid}/bakta/{genome}_parsed.tsv",
         filtered_diamond_result="results/{taxid}/diamond/{taxid}_{genome}_filtered.tsv",
         protein_links="results/{taxid}/string/{taxid}.protein.links.v12.0.txt"
     output:
-        "results/{taxid}/string/{taxid}_{genome}_string_scores.tsv"
+        "results/{taxid}/predictions/temp_dir/{taxid}_{genome}_string_scores.tsv"
     shell:
         """
         python3 scripts/metrics/get_string_scores.py \
@@ -88,11 +118,86 @@ rule get_string_scores:  # DONE
         """
 
 
-# snakemake --cores=all -p results/511145/predictions/GCF_000005845.2_ASM584v2_genomic_predictions.tsv
-rule make_predictions:
-    input:  # TODO add other metrics
-        rules.get_string_scores.output
+# snakemake --cores=all -p results/511145/hmm/511145_GCF_000005845.2_ASM584v2_genomic_hmm.txt
+rule kofam_scan:  # DONE
+    input:
+        rules.bakta_annotation.output.faa
     output:
-        "results/{taxid}/predictions/{genome}_predictions.tsv"
+        "results/{taxid}/hmm/{taxid}_{genome}_hmm.txt"
+    params:
+        profile="databases/profiles/prokaryote.hal",
+        ko_list="databases/ko_list",
+        format="mapper-one-line",
+        threads=8  # TODO include in README
+    shell:
+        """
+        kofam_scan/exec_annotation \
+        --cpu={params.threads} \
+        -p {params.profile} \
+        -k {params.ko_list} \
+        -f {params.format} \
+        -o {output} \
+        {input}
+        """
+
+
+# snakemake --cores=all -p results/511145/predictions/temp_dir/511145_GCF_000005845.2_ASM584v2_genomic_kegg.tsv
+rule kegg:
+    input:
+        gff=rules.parse_gff.output,
+        hmm=rules.kofam_scan.output
+    output:
+        "results/{taxid}/predictions/temp_dir/{taxid}_{genome}_kegg.tsv"
+    shell:
+        "python3 scripts/metrics/kegg.py --input-gff {input.gff} --input-hmm {input.hmm} --output {output}"
+
+
+# snakemake --cores=all -p results/511145/predictions/temp_dir/511145_GCF_000005845.2_ASM584v2_inter_dist.tsv
+rule intergenic_distances:
+    input:
+        rules.parse_gff.output
+    output:
+        "results/{taxid}/predictions/temp_dir/{taxid}_{genome}_inter_dist.tsv"
+    params:
+        matrix="data/matrix_emission_15.npy"
+    shell:
+        """
+        python3 scripts/metrics/intergenic_distances.py \
+        --input {input} \
+        --emission-matrix {params.matrix} \
+        --output {output}
+        """
+
+
+# snakemake --cores=all -p results/511145/predictions/GCF_000005845.2_ASM584v2_genomic_predictions.tsv
+rule predict_operons:  # DONE
+    input:
+        gff=rules.parse_gff.output,
+        string=rules.get_string_scores.output,
+        inter_dist=rules.intergenic_distances.output,
+        kegg=rules.kegg.output
+    output:
+        "results/{taxid}/predictions/temp_dir/{taxid}_{genome}_predictions.tsv"
+    params:
+        model="data/model.pkl"
+    shell:
+        """
+        python3 scripts/metrics/predict_operon.py \
+        --parsed-gff {input.gff} \
+        --string {input.string} \
+        --inter-dist {input.inter_dist} \
+        --kegg {input.kegg} \
+        --model {params.model} \
+        --output {output}
+        """
+
+
+# snakemake --cores=all -p results/511145/predictions/511145_GCF_000005845.2_ASM584v2_genomic_final_predictions.tsv
+rule main:  # DONE
+    input:
+        rules.parse_gff.output,
+        rules.predict_operons.output
+    output:
+        "results/{taxid}/predictions/{taxid}_{genome}_final_predictions.tsv"
     shell:
         "python3 scripts/main.py --genome {wildcards.genome} --taxid {wildcards.taxid}"

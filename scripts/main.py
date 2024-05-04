@@ -1,15 +1,19 @@
 import argparse
 
+import numpy as np
 import pandas as pd
 
 
-def combine_predictions(genome, taxon_id, string_scores):  # TODO add other metrics
+def format_output(genome, taxon_id, predictions):  # TODO add other metrics
 
     final_table = pd.read_csv(f"results/{taxon_id}/bakta/{genome}_parsed.tsv", sep="\t")
     final_table.drop(columns=final_table.columns[0], axis=1, inplace=True)
-    string_scores.drop(columns=string_scores.columns[0], axis=1, inplace=True)
+    predictions.drop(columns=predictions.columns[0], axis=1, inplace=True)
 
-    final_table["string_scores"] = string_scores
+    final_table["prediction"] = predictions
+    final_table.prediction = final_table.prediction.replace(
+        [1, 0], ["operon", "non_operon"]
+    )
 
     return final_table
 
@@ -29,17 +33,15 @@ if __name__ == "__main__":
     genome = parse_args().genome
     taxon_id = parse_args().taxid
 
-    string_scores = pd.read_csv(
-        f"results/{taxon_id}/string/{taxon_id}_{genome}_string_scores.tsv", sep="\t"
-    )
-    #
-    # other metrics
-    #
-    predictions = combine_predictions(genome, taxon_id, string_scores)
-    predictions.to_csv(
-        f"results/{taxon_id}/predictions/{genome}_predictions.tsv",
+    predictions = pd.read_csv(
+        "results/511145/predictions/temp_dir/511145_GCF_000005845.2_ASM584v2_genomic_predictions.tsv",
         sep="\t",
-        index=False,
+    )
+    final_table = format_output(genome, taxon_id, predictions)
+
+    final_table.to_csv(
+        f"results/{taxon_id}/predictions/{taxon_id}_{genome}_final_predictions.tsv",
+        sep="\t",
     )
 
     print("Job is done!")

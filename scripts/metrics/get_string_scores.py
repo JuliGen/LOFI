@@ -117,7 +117,6 @@ if __name__ == "__main__":
     filtered_diamond_result = pd.read_csv(path_filtered_diamond_result, sep="\t")
     protein_links = pd.read_csv(path_protein_links, sep=" ")
 
-    print("Getting STRING scores...")
     string_scores = get_string_scores(
         parsed_gff, filtered_diamond_result, protein_links
     )
