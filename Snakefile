@@ -70,12 +70,28 @@ rule filter_diamond_results: # DONE
         "python3 scripts/preprocessing/filter_diamond_results.py --input {input} --output {output}"
 
 
-# snakemake --cores=all -p results/511145/predictions/GCF_000005845.2_ASM584v2_genomic_predictions.tsv
-rule make_predictions:  # DONE
+# snakemake --cores=all -p results/511145/string/511145_GCF_000005845.2_ASM584v2_genomic_string_scores.tsv
+rule get_string_scores:  # DONE
     input:
-        "results/{taxid}/string/{taxid}.protein.links.v12.0.txt",
-        "results/{taxid}/bakta/{genome}_parsed.tsv",
-        "results/{taxid}/diamond/{taxid}_{genome}_filtered.tsv"
+        parsed_gff="results/{taxid}/bakta/{genome}_parsed.tsv",
+        filtered_diamond_result="results/{taxid}/diamond/{taxid}_{genome}_filtered.tsv",
+        protein_links="results/{taxid}/string/{taxid}.protein.links.v12.0.txt"
+    output:
+        "results/{taxid}/string/{taxid}_{genome}_string_scores.tsv"
+    shell:
+        """
+        python3 scripts/metrics/get_string_scores.py \
+        --parsed-gff {input.parsed_gff} \
+        --filtered-diamond-result {input.filtered_diamond_result} \
+        --protein-links {input.protein_links} \
+        --output {output}
+        """
+
+
+# snakemake --cores=all -p results/511145/predictions/GCF_000005845.2_ASM584v2_genomic_predictions.tsv
+rule make_predictions:
+    input:  # TODO add other metrics
+        rules.get_string_scores.output
     output:
         "results/{taxid}/predictions/{genome}_predictions.tsv"
     shell:

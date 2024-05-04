@@ -1,8 +1,10 @@
+import argparse
+
 import numpy as np
 import pandas as pd
 
 
-def get_score_from_df_subset(df_subset: pd.DataFrame, id: str) -> bool:
+def get_score_from_df_subset(df_subset: pd.DataFrame, id: str) -> int:
     """
     Additional function for predict_string function to match
     the id of the second protein in the data subset for the first protein.
@@ -18,7 +20,7 @@ def get_score_from_df_subset(df_subset: pd.DataFrame, id: str) -> bool:
     return score
 
 
-def predict_string(
+def get_string_scores(
     parsed_gff: pd.DataFrame,
     diamond_result_filtered: pd.DataFrame,
     protein_links: pd.DataFrame,
@@ -75,4 +77,50 @@ def predict_string(
         final_score = max(score_prev, score_next)
         scores.append(final_score)
 
-    return pd.Series(scores)
+    scores = pd.Series(scores)
+    scores = scores.fillna(500)
+
+    return scores
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        usage="get_string_scores.py \
+        --parsed-gff PARSED_FILE.TSV \
+        --filtered-diamond-result FILTERED_DIAMOND_RESULT.TSV \
+        --protein-links PROTEIN_LINKS.TXT \
+        --output STRING_SCORES.TSV",
+        description="""Parses .gff3 file with annotation obtained by bakta.""",
+    )
+    parser.add_argument("--parsed-gff", nargs="?", help="parsed gff file.tsv")
+    parser.add_argument(
+        "--filtered-diamond-result", nargs="?", help="filtered diamond result.tsv"
+    )
+    parser.add_argument(
+        "--protein-links", nargs="?", help="protein links from STRING db.txt"
+    )
+    parser.add_argument(
+        "-o", "--output", nargs="?", help="result file with obtained STRING scores.txt"
+    )
+
+    return parser.parse_args()
+
+
+if __name__ == "__main__":
+
+    path_parsed_gff = parse_args().parsed_gff
+    path_filtered_diamond_result = parse_args().filtered_diamond_result
+    path_protein_links = parse_args().protein_links
+    output_filename = parse_args().output
+
+    parsed_gff = pd.read_csv(path_parsed_gff, sep="\t")
+    filtered_diamond_result = pd.read_csv(path_filtered_diamond_result, sep="\t")
+    protein_links = pd.read_csv(path_protein_links, sep=" ")
+
+    print("Getting STRING scores...")
+    string_scores = get_string_scores(
+        parsed_gff, filtered_diamond_result, protein_links
+    )
+
+    string_scores.to_csv(output_filename, sep="\t")
+    print("STRING scores obtained")

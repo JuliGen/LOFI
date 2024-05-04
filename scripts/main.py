@@ -3,11 +3,15 @@ import argparse
 import pandas as pd
 
 
-def make_predictions():
-    data = [1, 2, 3]
-    predictions = pd.DataFrame(data=data)
+def combine_predictions(genome, taxon_id, string_scores):  # TODO add other metrics
 
-    return predictions
+    final_table = pd.read_csv(f"results/{taxon_id}/bakta/{genome}_parsed.tsv", sep="\t")
+    final_table.drop(columns=final_table.columns[0], axis=1, inplace=True)
+    string_scores.drop(columns=string_scores.columns[0], axis=1, inplace=True)
+
+    final_table["string_scores"] = string_scores
+
+    return final_table
 
 
 def parse_args():
@@ -25,17 +29,17 @@ if __name__ == "__main__":
     genome = parse_args().genome
     taxon_id = parse_args().taxid
 
-    protein_links = pd.read_csv(
-        f"results/{taxon_id}/string/{taxon_id}.protein.links.v12.0.txt"
+    string_scores = pd.read_csv(
+        f"results/{taxon_id}/string/{taxon_id}_{genome}_string_scores.tsv", sep="\t"
     )
-    parsed_gff = pd.read_csv(f"results/{taxon_id}/bakta/{genome}_parsed.tsv")
-    diamond_result_filtered = pd.read_csv(
-        f"results/{taxon_id}/diamond/{taxon_id}_{genome}_filtered.tsv"
-    )
-
-    predictions = make_predictions()
+    #
+    # other metrics
+    #
+    predictions = combine_predictions(genome, taxon_id, string_scores)
     predictions.to_csv(
-        f"results/{taxon_id}/predictions/{genome}_predictions.tsv", sep="\t"
+        f"results/{taxon_id}/predictions/{genome}_predictions.tsv",
+        sep="\t",
+        index=False,
     )
 
     print("Job is done!")
