@@ -118,6 +118,15 @@ rule get_string_scores:  # DONE
         """
 
 
+# snakemake --cores=all -p kofam_scan
+rule download_kofam_scan:
+    output:
+        "kofam_scan/exec_annotation"
+    run:
+        shell("git clone git@github.com:takaram/kofam_scan.git")
+        shell("rm kofam_scan/config-template.yml")
+
+
 # snakemake --cores=all -p results/511145/hmm/511145_GCF_000005845.2_ASM584v2_genomic_hmm.txt
 rule kofam_scan:  # DONE
     input:
@@ -125,13 +134,14 @@ rule kofam_scan:  # DONE
     output:
         "results/{taxid}/hmm/{taxid}_{genome}_hmm.txt"
     params:
+        kofam=rules.download_kofam_scan.output,
         profile="databases/profiles/prokaryote.hal",
         ko_list="databases/ko_list",
         format="mapper-one-line",
         threads=8  # TODO include in README
     shell:
         """
-        kofam_scan/exec_annotation \
+        {params.kofam} \
         --cpu={params.threads} \
         -p {params.profile} \
         -k {params.ko_list} \
