@@ -31,9 +31,9 @@ rule get_profiles:  # DONE
     input:
         "databases/profiles.tar.gz"
     output:
-        directory("databases/profiles")
-    run:
-        shell("tar -xzf {input} -C databases/ && rm {input}")
+        "databases/profiles/prokaryote.hal"
+    shell:
+        "tar -xzf {input} -C databases/ && rm {input}"
 
 
 # snakemake --cores=all -p results/511145/string/511145.protein.links.v12.0.txt
@@ -131,20 +131,20 @@ rule download_kofam_scan:
 rule kofam_scan:  # DONE
     input:
         kofam=rules.download_kofam_scan.output,
-        faa=rules.bakta_annotation.output.faa
+        faa=rules.bakta_annotation.output.faa,
+        ko_list="databases/ko_list",
+        profile="databases/profiles/prokaryote.hal"
     output:
         "results/{taxid}/hmm/{taxid}_{genome}_hmm.txt"
     params:
-        profile="databases/profiles/prokaryote.hal",
-        ko_list="databases/ko_list",
         format="mapper-one-line",
         threads=8  # TODO include in README
     shell:
         """
         {input.kofam} \
         --cpu={params.threads} \
-        -p {params.profile} \
-        -k {params.ko_list} \
+        -p {input.profile} \
+        -k {input.ko_list} \
         -f {params.format} \
         -o {output} \
         {input.faa}

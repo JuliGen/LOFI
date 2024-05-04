@@ -34,7 +34,7 @@ if __name__ == "__main__":
     taxon_id = parse_args().taxid
 
     predictions = pd.read_csv(
-        "results/511145/predictions/temp_dir/511145_GCF_000005845.2_ASM584v2_genomic_predictions.tsv",
+        f"results/{taxon_id}/predictions/temp_dir/{taxon_id}_{genome}_predictions.tsv",
         sep="\t",
     )
     final_table = format_output(genome, taxon_id, predictions)
