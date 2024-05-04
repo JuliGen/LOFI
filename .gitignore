@@ -2,4 +2,4 @@
 __pycache__/
 .idea
 .snakemake
-databases/db-light
+databases/
