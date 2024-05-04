@@ -1,20 +1,14 @@
-import os
-import gzip
-import shutil
-import wget
-
 import numpy as np
 import pandas as pd
 
 
-def get_score_from_df_subset(df_subset: pd.DataFrame, id: str, threshold: int) -> bool:
+def get_score_from_df_subset(df_subset: pd.DataFrame, id: str) -> bool:
     """
     Additional function for predict_string function to match
     the id of the second protein in the data subset for the first protein.
 
     :param df_subset: subset of data from the protein_links table for a specific protein id
     :param id: the second id for the protein that needs to be matched with the first one from df_subset
-    :param threshold: score threshold by which a prediction is made
     :return:
     """
     try:
