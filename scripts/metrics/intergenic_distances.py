@@ -58,4 +58,4 @@ def predict_operon_inter_dist(df_inter_dist: pd.DataFrame) -> pd.Series:
     obs_states = np.array(df_inter_dist.cat_dist.values).reshape(-1, 1)
     hid_states = pd.Series(model.predict(obs_states))
 
-    return hid_states
+    return hid_states[:,0]
