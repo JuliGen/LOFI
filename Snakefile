@@ -130,24 +130,24 @@ rule download_kofam_scan:
 # snakemake --cores=all -p results/511145/hmm/511145_GCF_000005845.2_ASM584v2_genomic_hmm.txt
 rule kofam_scan:  # DONE
     input:
-        rules.bakta_annotation.output.faa
+        kofam=rules.download_kofam_scan.output,
+        faa=rules.bakta_annotation.output.faa
     output:
         "results/{taxid}/hmm/{taxid}_{genome}_hmm.txt"
     params:
-        kofam=rules.download_kofam_scan.output,
         profile="databases/profiles/prokaryote.hal",
         ko_list="databases/ko_list",
         format="mapper-one-line",
         threads=8  # TODO include in README
     shell:
         """
-        {params.kofam} \
+        {input.kofam} \
         --cpu={params.threads} \
         -p {params.profile} \
         -k {params.ko_list} \
         -f {params.format} \
         -o {output} \
-        {input}
+        {input.faa}
         """
 
 
@@ -202,12 +202,12 @@ rule predict_operons:  # DONE
         """
 
 
-# snakemake --cores=all -p results/511145/predictions/511145_GCF_000005845.2_ASM584v2_genomic_final_predictions.tsv
+# snakemake --cores=all -p results/511145/predictions/GCF_000005845.2_ASM584v2_genomic_predictions.tsv
 rule main:  # DONE
     input:
         rules.parse_gff.output,
         rules.predict_operons.output
     output:
-        "results/{taxid}/predictions/{taxid}_{genome}_final_predictions.tsv"
+        "results/{taxid}/predictions/{genome}_predictions.tsv"
     shell:
         "python3 scripts/main.py --genome {wildcards.genome} --taxid {wildcards.taxid}"

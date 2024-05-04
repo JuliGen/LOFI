@@ -40,7 +40,7 @@ if __name__ == "__main__":
     final_table = format_output(genome, taxon_id, predictions)
 
     final_table.to_csv(
-        f"results/{taxon_id}/predictions/{taxon_id}_{genome}_final_predictions.tsv",
+        f"results/{taxon_id}/predictions/{genome}_predictions.tsv",
         sep="\t",
     )
 
