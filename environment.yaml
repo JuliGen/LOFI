@@ -1,4 +1,4 @@
-name: operonmapper_new
+name: operonmapper
 channels:
   - bioconda
   - conda-forge
