@@ -38,10 +38,10 @@ if __name__ == "__main__":
         sep="\t",
     )
     final_table = format_output(genome, taxon_id, predictions)
-
+    output_filename = f"results/{taxon_id}/predictions/{genome}_predictions.tsv"
     final_table.to_csv(
-        f"results/{taxon_id}/predictions/{genome}_predictions.tsv",
+        output_filename,
         sep="\t",
     )
 
-    print("Job is done!")
+    print(f"Job is done! Prediction results are in the folder {output_filename}")

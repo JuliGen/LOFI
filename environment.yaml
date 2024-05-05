@@ -20,6 +20,7 @@ dependencies:
   - bakta=1.9.3=pyhdfd78af_0
   - bcrypt=4.1.2=py310hcb5633a_0
   - biopython=1.83=py310h2372a71_0
+  - black=24.4.2=py310hff52083_0
   - blast=2.15.0=pl5321h6f7f691_1
   - boto3=1.34.98=pyhd8ed1ab_0
   - botocore=1.34.98=pyge310_1234567_0
@@ -32,6 +33,7 @@ dependencies:
   - cffi=1.16.0=py310h2fee648_0
   - charset-normalizer=3.3.2=pyhd8ed1ab_0
   - circos=0.69.9=hdfd78af_0
+  - click=8.1.7=unix_pyh707e725_0
   - coin-or-cbc=2.10.10=h9002f0b_0
   - coin-or-cgl=0.60.7=h516709c_0
   - coin-or-clp=1.17.8=h1ee7a9c_0
@@ -146,6 +148,7 @@ dependencies:
   - markupsafe=2.1.5=py310h2372a71_0
   - mdurl=0.1.2=pyhd8ed1ab_0
   - multidict=6.0.5=py310h2372a71_0
+  - mypy_extensions=1.0.0=pyha770c72_0
   - nbformat=5.10.4=pyhd8ed1ab_0
   - ncbi-amrfinderplus=3.12.8=h283d18e_0
   - ncbi-vdb=3.1.0=h4ac6f70_2
@@ -157,6 +160,7 @@ dependencies:
   - pandas=2.2.2=py310hcc13569_0
   - parallel=20160622=1
   - paramiko=3.4.0=pyhd8ed1ab_0
+  - pathspec=0.12.1=pyhd8ed1ab_0
   - pbzip2=1.1.13=h1fcc475_2
   - pcre=8.45=h9c3ff4c_0
   - peppy=0.40.1=pyhd8ed1ab_0
@@ -251,6 +255,7 @@ dependencies:
   - rich=13.7.1=pyhd8ed1ab_0
   - rpds-py=0.18.0=py310hcb5633a_0
   - rsa=4.9=pyhd8ed1ab_0
+  - ruby=2.1.7=0
   - s3transfer=0.10.1=pyhd8ed1ab_0
   - scipy=1.13.0=py310h93e2701_1
   - setuptools=69.5.1=pyhd8ed1ab_0

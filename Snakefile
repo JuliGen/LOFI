@@ -59,7 +59,7 @@ rule diamond_makedb:  # DONE
 rule bakta_annotation:  # DONE
     input:
         db="databases/db-light",
-        genome="data/{genome}.fna"  # files with genome must be in data folder without subfolders
+        genome="genomes/{genome}.fna"  # files with genome must be in genomes folder without subfolders
     output:  # 15 files in total
         gff3="results/{taxid}/bakta/{genome}.gff3",
         faa="results/{taxid}/bakta/{genome}.faa"
