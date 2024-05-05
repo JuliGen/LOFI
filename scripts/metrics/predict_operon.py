@@ -21,12 +21,12 @@ def predict_operon(model_file: str, data_for_predict: pd.DataFrame) -> pd.Series
 def parse_args():
     parser = argparse.ArgumentParser(
         usage="predict_operon.py"
-        "--parsed-gff PARSED_GFF.TSV"
-        "--string STRING_SCORES.TSV"
-        "--inter-dist INTER_DIST.TSV"
-        "--kegg KEGG.TSV"
-        "--model MODEL.PKL"
-        "--output RESULT.TSV",
+              "--parsed-gff PARSED_GFF.TSV"
+              "--string STRING_SCORES.TSV"
+              "--inter-dist INTER_DIST.TSV"
+              "--kegg KEGG.TSV"
+              "--model MODEL.PKL"
+              "--output RESULT.TSV",
         description="""TODO""",
     )
     parser.add_argument("--parsed-gff", nargs="?", help="path to parsed gff file.tsv")
@@ -57,8 +57,8 @@ if __name__ == "__main__":
         data={
             "strand": parsed_gff.strand,
             "prob_operon": inter_dist.iloc[:, 1],
-            "pred_string": string.iloc[:, 1],
-            "intersection_map_count": kegg.iloc[:, 1],
+            "pred_string": string.final_scores,
+            "intersection_map_count": kegg.intersection_map_count,
         }
     )
 
