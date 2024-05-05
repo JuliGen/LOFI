@@ -27,7 +27,7 @@ def parse_gff(path: str) -> pd.DataFrame:
                     record.id,
                     int(feature.location.start) + 1,
                     int(feature.location.end),
-                    "+" if feature.location.strand == 1 else "-",
+                    1 if feature.location.strand == 1 else 0,
                     gene_name,
                     "".join(feature.qualifiers["locus_tag"]),
                 ]

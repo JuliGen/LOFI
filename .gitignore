@@ -1,5 +1,6 @@
 .ipynb_checkpoints
 __pycache__/
-.idea
-.snakemake
-databases/db-light
+.idea/
+.snakemake/
+databases/
+kofam_scan/

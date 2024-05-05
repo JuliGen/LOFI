@@ -21,10 +21,10 @@ def get_score_from_df_subset(df_subset: pd.DataFrame, id: str) -> int:
 
 
 def get_string_scores(
-    parsed_gff: pd.DataFrame,
-    diamond_result_filtered: pd.DataFrame,
-    protein_links: pd.DataFrame,
-) -> pd.Series:
+        parsed_gff: pd.DataFrame,
+        diamond_result_filtered: pd.DataFrame,
+        protein_links: pd.DataFrame,
+) -> pd.DataFrame:
     """
     Predicts the presence of a gene in an operon based on a score from the STRING database at a given threshold.
 
@@ -34,7 +34,10 @@ def get_string_scores(
     :return: pd.Series with predictions for each gene
     """
     # FIXME (for now contigs must be in the correct order)
-    scores = []
+    final_scores = []
+    next_scores = []
+    prev_scores = []
+
     df_length = parsed_gff.shape[0]
 
     for n_id in range(df_length):
@@ -44,7 +47,9 @@ def get_string_scores(
                 "query_accession == @id_cur"
             ).target_accession.iloc[0]
         except IndexError:
-            scores.append(500)  # mean threshold for prediction
+            final_scores.append(500)  # mean threshold for prediction
+            next_scores.append(500)
+            prev_scores.append(500)
             continue
 
         df_subset = protein_links.query("protein1 == @id_cur_string")
@@ -75,9 +80,17 @@ def get_string_scores(
             score_next = get_score_from_df_subset(df_subset, id_next_string)
 
         final_score = max(score_prev, score_next)
-        scores.append(final_score)
+        final_scores.append(final_score)
+        next_scores.append(score_next)
+        prev_scores.append(score_prev)
 
-    scores = pd.Series(scores)
+    scores = pd.DataFrame(
+        data={
+            "prev_scores": prev_scores,
+            "next_scores": next_scores,
+            "final_scores": final_scores
+        }
+    )
     scores = scores.fillna(500)
 
     return scores
@@ -107,7 +120,6 @@ def parse_args():
 
 
 if __name__ == "__main__":
-
     path_parsed_gff = parse_args().parsed_gff
     path_filtered_diamond_result = parse_args().filtered_diamond_result
     path_protein_links = parse_args().protein_links
@@ -117,7 +129,6 @@ if __name__ == "__main__":
     filtered_diamond_result = pd.read_csv(path_filtered_diamond_result, sep="\t")
     protein_links = pd.read_csv(path_protein_links, sep=" ")
 
-    print("Getting STRING scores...")
     string_scores = get_string_scores(
         parsed_gff, filtered_diamond_result, protein_links
     )
