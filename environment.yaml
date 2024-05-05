@@ -255,7 +255,6 @@ dependencies:
   - rich=13.7.1=pyhd8ed1ab_0
   - rpds-py=0.18.0=py310hcb5633a_0
   - rsa=4.9=pyhd8ed1ab_0
-  - ruby=2.1.7=0
   - s3transfer=0.10.1=pyhd8ed1ab_0
   - scipy=1.13.0=py310h93e2701_1
   - setuptools=69.5.1=pyhd8ed1ab_0
@@ -298,6 +297,15 @@ dependencies:
   - zstd=1.5.5=hfc55251_0
   - pip:
       - bcbio-gff==0.7.1
+      - beautifulsoup4==4.12.3
+      - filelock==3.14.0
+      - gdown==5.1.0
       - lightgbm==4.3.0
+      - nltk==3.8.1
+      - regex==2024.4.28
+      - require==0.1.1
+      - ruby==0.0.2
       - scikit-learn==1.4.1.post1
+      - soupsieve==2.5
+      - tqdm==4.66.4
       - wget==3.2

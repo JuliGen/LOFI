@@ -6,14 +6,17 @@ rule download_db_light:  # DONE
         "bakta_db download --output databases/ --type light"
 
 
-# Скачивается очень долго, поэтому с диска нужно сделать
-# rule download_db_for_kofam_scan:
-#     output:
-#         "databases/ko_list.gz",
-#         "databases/profiles.tar.gz"
-#     run:
-#         shell("wget ftp://ftp.genome.jp/pub/db/kofam/ko_list.gz -P databases/")
-#         shell("wget ftp://ftp.genome.jp/pub/db/kofam/profiles.tar.gz -P databases/")
+rule download_db_for_kofam_scan:
+    output:
+        "databases/ko_list.gz",
+        "databases/profiles.tar.gz"
+    run:
+        shell("gdown --fuzzy \
+        https://drive.google.com/file/d/1csxtWD2UBbs6XAwTCVEqzGVVDzJKQhOl/view\?usp\=drive_link \
+        -O databases/ko_list.gz")
+        shell("gdown --fuzzy \
+        https://drive.google.com/file/d/1m_907sx0XhL5UC8pTYg24b4caA4OZ_Cx/view?usp=drive_link \
+        -O databases/profiles.tar.gz")
 
 
 # snakemake --cores=all -p databases/ko_list
