@@ -34,7 +34,8 @@ mamba activate operonmapper
 The first run will take longer than subsequent runs due to the loading of the databases required for analysis.
 
 As input, you must provide a `FASTA file` with the **nucleotide sequence** of the bacterial genome in the `.fna` format 
-(if you have a different extension, please <u>change it manually</u>).
+(if you have a different extension, please <u>change it manually</u>). 
+Contigs within a FASTA file are expected to be in the **correct order**.
 
 **File with sequence must be in the `genomes` folder**.
 
