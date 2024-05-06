@@ -121,14 +121,13 @@ rule get_string_scores:  # DONE
         """
 
 
-# snakemake --cores=all -p kofam_scan
+# snakemake --cores=all -p kofam_scan-1.3.0/exec_annotation
 rule download_kofam_scan:
     output:
         "kofam_scan-1.3.0/exec_annotation"
     run:
-        shell(" wget https://www.genome.jp/ftp/tools/kofam_scan/kofam_scan-1.3.0.tar.gz")
-        shell("tar -xzf kofam_scan-1.3.0.tar.gz")
-        shell("rm kofam_scan-1.3.0.tar.gz")
+        shell("wget https://www.genome.jp/ftp/tools/kofam_scan/kofam_scan-1.3.0.tar.gz")
+        shell("tar -xzf kofam_scan-1.3.0.tar.gz && rm kofam_scan-1.3.0.tar.gz")
 
 
 # snakemake --cores=all -p results/511145/hmm/511145_GCF_000005845.2_ASM584v2_genomic_hmm.txt
