@@ -7,6 +7,8 @@ Unfortunately, the tool <u>does not currently work</u> on the **macOS** operatin
 
 All performance tests were carried out on **Ubuntu 22.04 LTS**.
 
+The tool will take up about **12 GB** of disk space.
+
 ## Description
 
 This tool is designed to predict the location of bacterial genes in an operon based on 3 metrics: 
