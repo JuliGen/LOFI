@@ -6,7 +6,7 @@ import pandas as pd
 
 
 def get_ko_map(
-        path_hmm_result: str, path_to_ko_map: str = "data/ko_map.json"
+    path_hmm_result: str, path_to_ko_map: str = "data/ko_map.json"
 ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     """
     Gets information about KO and metabolic pathways for each protein_id
@@ -38,8 +38,11 @@ def get_ko_map(
     return dict_ko, dict_map
 
 
-def calc_intersection_map(parsed_gff: pd.DataFrame, path_hmm_result: str,
-                          path_to_ko_desc: str = "data/ko_descriptions.json") -> pd.DataFrame:
+def calc_intersection_map(
+    parsed_gff: pd.DataFrame,
+    path_hmm_result: str,
+    path_to_ko_desc: str = "data/ko_descriptions.json",
+) -> pd.DataFrame:
     """
     Counts the number of matches between metabolic pathways
     :param parsed_gff: parsed file.gff with annotation: the result of the parse_gff function
@@ -74,15 +77,17 @@ def calc_intersection_map(parsed_gff: pd.DataFrame, path_hmm_result: str,
     ko_description = []
     for kos in parsed_gff["ko"]:
         for ko in kos:
-            ko_description.append(''.join(ko_desc[ko]))
-        list_desc_ko.append('; '.join(ko_description))
+            ko_description.append("".join(ko_desc[ko]))
+        list_desc_ko.append("; ".join(ko_description))
         ko_description = []
 
     kegg_annotation = pd.DataFrame(
         data={
-            "KO(KEGG)": [','.join(map(str, l)) for l in parsed_gff["ko"]],
-            "metabolic_pathway(KEGG)": [','.join(map(str, l)) for l in parsed_gff["map"]],
-            "description(KEGG)": list_desc_ko,
+            "ko_kegg": [",".join(map(str, l)) for l in parsed_gff["ko"]],
+            "metabolic_pathway_kegg": [
+                ",".join(map(str, l)) for l in parsed_gff["map"]
+            ],
+            "description_kegg": list_desc_ko,
             "intersection_map_count": parsed_gff.intersection_map_count,
         }
     )

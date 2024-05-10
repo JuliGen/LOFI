@@ -17,13 +17,20 @@ def format_output(genome, taxon_id, predictions):  # TODO add other metrics
     # )
 
     final_table_2 = parsed_gff.copy()
-    kegg_annotation = pd.read_csv(f"results/{taxon_id}/predictions/temp_dir/{taxon_id}_{genome}_kegg.tsv", sep="\t")
-    string_result = pd.read_csv(f"results/{taxon_id}/predictions/temp_dir/{taxon_id}_{genome}_string_scores.tsv",
-                                sep="\t")
+    kegg_annotation = pd.read_csv(
+        f"results/{taxon_id}/predictions/temp_dir/{taxon_id}_{genome}_kegg.tsv",
+        sep="\t",
+    )
+    string_result = pd.read_csv(
+        f"results/{taxon_id}/predictions/temp_dir/{taxon_id}_{genome}_string_scores.tsv",
+        sep="\t",
+    )
 
-    final_table_2["KO(KEGG)"] = kegg_annotation["KO(KEGG)"]
-    final_table_2["metabolic_pathway(KEGG)"] = kegg_annotation["metabolic_pathway(KEGG)"].replace(np.nan, "")
-    final_table_2["description(KEGG)"] = kegg_annotation["description(KEGG)"]
+    final_table_2["ko_kegg"] = kegg_annotation["ko_kegg"]
+    final_table_2["metabolic_pathway_kegg"] = kegg_annotation[
+        "metabolic_pathway_kegg"
+    ].replace(np.nan, "")
+    final_table_2["description_kegg"] = kegg_annotation["description_kegg"]
     final_table_2["prediction"] = predictions
 
     current_operon = 1
@@ -31,21 +38,25 @@ def format_output(genome, taxon_id, predictions):  # TODO add other metrics
     for i in range(len(final_table_2) - 1):
         if final_table_2["prediction"].iloc[i] == 1:
             dict_operons[current_operon].append(i)
-            map_current_gene = final_table_2["metabolic_pathway(KEGG)"].iloc[i]
-            map_next_gene = final_table_2["metabolic_pathway(KEGG)"].iloc[i + 1]
+            map_current_gene = final_table_2["metabolic_pathway_kegg"].iloc[i]
+            map_next_gene = final_table_2["metabolic_pathway_kegg"].iloc[i + 1]
             string_next_gene = string_result["next_scores"].iloc[i]
-            if (string_next_gene < 810 and len(
-                    set(map_current_gene.split(',')).intersection(map_next_gene.split(','))) < 1) or \
-                    final_table_2["prediction"].iloc[i + 1] == 0:
+            if (
+                string_next_gene < 810
+                and len(
+                    set(map_current_gene.split(",")).intersection(
+                        map_next_gene.split(",")
+                    )
+                )
+                < 1
+            ) or final_table_2["prediction"].iloc[i + 1] == 0:
                 current_operon += 1
                 dict_operons[current_operon] = []
 
-    final_table_2.insert(loc=0,
-                         column="Number Operon",
-                         value="Non_Operon")
+    final_table_2.insert(loc=0, column="operon_number", value="non_operon")
 
-    for number_operon, index_cds in dict_operons.items():
-        final_table_2.loc[index_cds, "Number Operon"] = f"Operon_{number_operon}"
+    for operon_number, index_cds in dict_operons.items():
+        final_table_2.loc[index_cds, "operon_number"] = f"operon_{operon_number}"
 
     final_table_2 = final_table_2.drop(["prediction", "strand"], axis=1)
 
