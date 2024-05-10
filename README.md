@@ -1,4 +1,4 @@
-# 👩🏻‍💻OperonMapper <img src ='https://papik.pro/uploads/posts/2021-12/1639240390_33-papik-pro-p-dinozavr-klipart-33.png' width =400 align="right">
+# 👩🏻‍💻LOFI (Locally run Operon Finder based on Integrated metrics) <img src ='https://papik.pro/uploads/posts/2021-12/1639240390_33-papik-pro-p-dinozavr-klipart-33.png' width =400 align="right">
 > *This repository is for a project to create a tool for searching for operons*
 
 ## Warning
@@ -20,15 +20,15 @@ from **KEGG PATHWAY Database**.
 Clone this repo and go to created folder: 
 
 ```shell
-git clone git@github.com:JuliGen/OperonMapper.git && \
-cd OperonMapper
+git clone git@github.com:JuliGen/LOFI.git && \
+cd LOFI
 ```
 
 Create mamba environment from `environment.yaml` and activate it:
 
 ```shell
 mamba env create -f environment.yaml && \
-mamba activate operonmapper
+mamba activate lofi
 ```
 
 ## Usage

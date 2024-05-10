@@ -1,4 +1,4 @@
-name: operonmapper
+name: lofi
 channels:
   - bioconda
   - conda-forge
