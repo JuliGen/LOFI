@@ -6,7 +6,7 @@ import pandas as pd
 
 def get_score_from_df_subset(df_subset: pd.DataFrame, id: str) -> int:
     """
-    Additional function for predict_string function to match
+    Additional function for get_string_scores function to match
     the id of the second protein in the data subset for the first protein.
 
     :param df_subset: subset of data from the protein_links table for a specific protein id
@@ -21,15 +21,15 @@ def get_score_from_df_subset(df_subset: pd.DataFrame, id: str) -> int:
 
 
 def get_string_scores(
-        parsed_gff: pd.DataFrame,
-        diamond_result_filtered: pd.DataFrame,
-        protein_links: pd.DataFrame,
+    parsed_gff: pd.DataFrame,
+    diamond_result_filtered: pd.DataFrame,
+    protein_links: pd.DataFrame,
 ) -> pd.DataFrame:
     """
     Predicts the presence of a gene in an operon based on a score from the STRING database at a given threshold.
 
-    :param parsed_gff: parsed file.gff with annotation: the result of the parse_gff function
-    :param diamond_result_filtered:
+    :param parsed_gff: parsed file.gff3 with annotation - the result of the parse_gff function
+    :param diamond_result_filtered: unique values from Diamond alignment
     :param protein_links: pd.DataFrame with protein combined scores: the result of get_protein_links function
     :return: pd.Series with predictions for each gene
     """
@@ -88,7 +88,7 @@ def get_string_scores(
         data={
             "prev_scores": prev_scores,
             "next_scores": next_scores,
-            "final_scores": final_scores
+            "final_scores": final_scores,
         }
     )
     scores = scores.fillna(500)
