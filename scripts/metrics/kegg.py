@@ -83,7 +83,7 @@ def calc_intersection_map(
 
     kegg_annotation = pd.DataFrame(
         data={
-            "ko_kegg": [",".join(map(str, l)) for l in parsed_gff["ko"]],
+            "kegg_orthology": [",".join(map(str, l)) for l in parsed_gff["ko"]],
             "metabolic_pathway_kegg": [
                 ",".join(map(str, l)) for l in parsed_gff["map"]
             ],

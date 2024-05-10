@@ -26,7 +26,7 @@ def format_output(genome, taxon_id, predictions):  # TODO add other metrics
         sep="\t",
     )
 
-    final_table_2["ko_kegg"] = kegg_annotation["ko_kegg"]
+    final_table_2["kegg_orthology"] = kegg_annotation["kegg_orthology"]
     final_table_2["metabolic_pathway_kegg"] = kegg_annotation[
         "metabolic_pathway_kegg"
     ].replace(np.nan, "")
