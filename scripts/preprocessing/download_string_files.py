@@ -48,7 +48,7 @@ def parse_args():
         usage="download_string_files.py --taxid TAXON_ID",
         description="""Downloads files for subsequent analysis from the STRING database.""",
     )
-    parser.add_argument("--taxid", nargs="1", help="taxon_id")
+    parser.add_argument("--taxid", nargs="?", help="taxon_id")
 
     return parser.parse_args()
 

@@ -105,15 +105,15 @@ def parse_args():
         --output STRING_SCORES.TSV",
         description="""Gets STRING scores for each protein in parsed gff file.""",
     )
-    parser.add_argument("--parsed-gff", nargs="1", help="parsed gff file.tsv")
+    parser.add_argument("--parsed-gff", nargs="?", help="parsed gff file.tsv")
     parser.add_argument(
-        "--filtered-diamond-result", nargs="1", help="filtered diamond result.tsv"
+        "--filtered-diamond-result", nargs="?", help="filtered diamond result.tsv"
     )
     parser.add_argument(
-        "--protein-links", nargs="1", help="protein links from STRING db.txt"
+        "--protein-links", nargs="?", help="protein links from STRING db.txt"
     )
     parser.add_argument(
-        "-o", "--output", nargs="1", help="result file with obtained STRING scores.tsv"
+        "-o", "--output", nargs="?", help="result file with obtained STRING scores.tsv"
     )
 
     return parser.parse_args()

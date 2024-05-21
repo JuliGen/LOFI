@@ -30,14 +30,14 @@ def parse_args():
         "--output RESULT.TSV",
         description="""Makes predictions using a trained RandomForest model.""",
     )
-    parser.add_argument("--parsed-gff", nargs="1", help="path to parsed gff file.tsv")
-    parser.add_argument("--string", nargs="1", help="path to STRING scores.tsv")
+    parser.add_argument("--parsed-gff", nargs="?", help="path to parsed gff file.tsv")
+    parser.add_argument("--string", nargs="?", help="path to STRING scores.tsv")
     parser.add_argument(
-        "--inter-dist", nargs="1", help="path to intergenic distances result file.tsv"
+        "--inter-dist", nargs="?", help="path to intergenic distances result file.tsv"
     )
-    parser.add_argument("--kegg", nargs="1", help="path to kegg result file.npy")
-    parser.add_argument("--model", nargs="1", help="model for predictions.pkl")
-    parser.add_argument("-o", "--output", nargs="1", help="predictions results.tsv")
+    parser.add_argument("--kegg", nargs="?", help="path to kegg result file.npy")
+    parser.add_argument("--model", nargs="?", help="model for predictions.pkl")
+    parser.add_argument("-o", "--output", nargs="?", help="predictions results.tsv")
     return parser.parse_args()
 
 

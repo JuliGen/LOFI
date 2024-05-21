@@ -86,12 +86,12 @@ def parse_args():
         usage="intergenic_distances.py --input PARSED_GFF.TSV --emission-matrix PATH_TO_MATRIX.NPY --output RESULT.TSV",
         description="""Gets hidden states based on intergenic distance for HMM.""",
     )
-    parser.add_argument("-i", "--input", nargs="1", help="parsed gff file.tsv")
+    parser.add_argument("-i", "--input", nargs="?", help="parsed gff file.tsv")
     parser.add_argument(
-        "--emission-matrix", nargs="1", help="path to emission matrix.npy"
+        "--emission-matrix", nargs="?", help="path to emission matrix.npy"
     )
     parser.add_argument(
-        "-o", "--output", nargs="1", help="path to intergenic distances result file.tsv"
+        "-o", "--output", nargs="?", help="path to intergenic distances result file.tsv"
     )
 
     return parser.parse_args()

@@ -105,11 +105,11 @@ def parse_args():
         --output INTERSECTION_MAP_COUNT.TSV",
         description="""Gets intersection of metabolic pathways for each protein.""",
     )
-    parser.add_argument("-igff", "--input-gff", nargs="1", help="parsed gff file.tsv")
+    parser.add_argument("-igff", "--input-gff", nargs="?", help="parsed gff file.tsv")
     parser.add_argument(
-        "-ihmm", "--input-hmm", nargs="1", help="hmm results after kofam scan.tsv"
+        "-ihmm", "--input-hmm", nargs="?", help="hmm results after kofam scan.tsv"
     )
-    parser.add_argument("-o", "--output", nargs="1", help="path to hmm result file.txt")
+    parser.add_argument("-o", "--output", nargs="?", help="path to hmm result file.txt")
 
     return parser.parse_args()
 

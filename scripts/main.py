@@ -71,8 +71,8 @@ def parse_args():
         usage="main.py --genome GENOME.FNA --taxid TAXON_ID",
         description="""Starts operon prediction pipeline.""",
     )
-    parser.add_argument("--genome", nargs="1", help="genome.fna")
-    parser.add_argument("--taxid", nargs="1", help="ncbi taxon id")
+    parser.add_argument("--genome", nargs="?", help="genome.fna")
+    parser.add_argument("--taxid", nargs="?", help="ncbi taxon id")
 
     return parser.parse_args()
 

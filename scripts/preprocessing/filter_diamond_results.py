@@ -37,9 +37,9 @@ def parse_args():
         usage="filter_diamond_results.py --input DIAMOND_RESULT.TSV --output FILTERED_DIAMOND_RESULT.TSV",
         description="""Filters results after Diamond alignment.""",
     )
-    parser.add_argument("-i", "--input", nargs="1", help="diamond result file.tsv")
+    parser.add_argument("-i", "--input", nargs="?", help="diamond result file.tsv")
     parser.add_argument(
-        "-o", "--output", nargs="1", help="filtered diamond result file.tsv"
+        "-o", "--output", nargs="?", help="filtered diamond result file.tsv"
     )
 
     return parser.parse_args()
