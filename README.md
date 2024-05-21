@@ -51,6 +51,9 @@ All commands are integrated in the snakemake. To start the analysis execute the 
 
 You have to change 2 variables: `taxid` and `genome`, respectively.
 
+Also, if you want to launch **kofam_scan** in parallel while doing pipeline, go to the appropriate rule in `Snakefile`
+and change the `params.threads` variable to the desired one.
+
 ```shell
 snakemake --cores=all -p results/{taxid}/predictions/{genome}_predictions.tsv
 ```
