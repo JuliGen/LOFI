@@ -1,5 +1,7 @@
+# Comments represent single launch of rule
+
 # snakemake --cores=all -p databases/db-light
-rule download_db_light:  # DONE
+rule download_db_light:
     output:
         directory("databases/db-light")
     shell:
@@ -20,7 +22,7 @@ rule download_db_for_kofam_scan:
 
 
 # snakemake --cores=all -p databases/ko_list
-rule get_ko_list:  # DONE
+rule get_ko_list:
     input:
         "databases/ko_list.gz"
     output:
@@ -30,7 +32,7 @@ rule get_ko_list:  # DONE
 
 
 # snakemake --cores=all -p databases/profiles
-rule get_profiles:  # DONE
+rule get_profiles:
     input:
         "databases/profiles.tar.gz"
     output:
@@ -40,7 +42,7 @@ rule get_profiles:  # DONE
 
 
 # snakemake --cores=all -p results/511145/string/511145.protein.links.v12.0.txt
-rule download_string_files:  # DONE
+rule download_string_files:
     output:  # 4 files in total
         "results/{taxid}/string/{taxid}.protein.links.v12.0.txt",
         "results/{taxid}/string/{taxid}.protein.sequences.v12.0.fa"
@@ -49,7 +51,7 @@ rule download_string_files:  # DONE
 
 
 # snakemake --cores=all -p results/511145/diamond/511145.dmnd
-rule diamond_makedb:  # DONE
+rule diamond_makedb:
     input:
         "results/{taxid}/string/{taxid}.protein.sequences.v12.0.fa"
     output:
@@ -59,7 +61,7 @@ rule diamond_makedb:  # DONE
 
 
 # snakemake --cores=all -p results/511145/bakta/GCF_000005845.2_ASM584v2_genomic.faa
-rule bakta_annotation:  # DONE
+rule bakta_annotation:
     input:
         db="databases/db-light",
         genome="genomes/{genome}.fna"  # files with genome must be in genomes folder without subfolders
@@ -73,7 +75,7 @@ rule bakta_annotation:  # DONE
 
 
 # snakemake --cores=all -p results/511145/diamond/511145.tsv
-rule diamond_blastp:  # DONE
+rule diamond_blastp:
     input:
         faa=rules.bakta_annotation.output.faa,
         db=rules.diamond_makedb.output
@@ -84,7 +86,7 @@ rule diamond_blastp:  # DONE
 
 
 # snakemake --cores=all -p results/511145/bakta/GCF_000005845.2_ASM584v2_genomic_parsed.tsv
-rule parse_gff:  # DONE
+rule parse_gff:
     input:
         rules.bakta_annotation.output.gff3
     output:
@@ -94,7 +96,7 @@ rule parse_gff:  # DONE
 
 
 # snakemake --cores=all -p results/511145/diamond/511145_GCF_000005845.2_ASM584v2_genomic_filtered.tsv
-rule filter_diamond_results: # DONE
+rule filter_diamond_results:
     input:
         rules.diamond_blastp.output
     output:
@@ -104,7 +106,7 @@ rule filter_diamond_results: # DONE
 
 
 # snakemake --cores=all -p results/511145/predictions/temp_dir/511145_GCF_000005845.2_ASM584v2_genomic_string_scores.tsv
-rule get_string_scores:  # DONE
+rule get_string_scores:
     input:
         parsed_gff="results/{taxid}/bakta/{genome}_parsed.tsv",
         filtered_diamond_result="results/{taxid}/diamond/{taxid}_{genome}_filtered.tsv",
@@ -131,7 +133,7 @@ rule download_kofam_scan:
 
 
 # snakemake --cores=all -p results/511145/hmm/511145_GCF_000005845.2_ASM584v2_genomic_hmm.txt
-rule kofam_scan:  # DONE
+rule kofam_scan:
     input:
         kofam=rules.download_kofam_scan.output,
         faa=rules.bakta_annotation.output.faa,
@@ -141,7 +143,7 @@ rule kofam_scan:  # DONE
         "results/{taxid}/hmm/{taxid}_{genome}_hmm.txt"
     params:
         format="mapper-one-line",
-        threads=8  # TODO include in README
+        threads=8
     shell:
         """
         {input.kofam} \
@@ -183,7 +185,7 @@ rule intergenic_distances:
 
 
 # snakemake --cores=all -p results/511145/predictions/GCF_000005845.2_ASM584v2_genomic_predictions.tsv
-rule predict_operons:  # DONE
+rule predict_operons:
     input:
         gff=rules.parse_gff.output,
         string=rules.get_string_scores.output,
@@ -206,7 +208,7 @@ rule predict_operons:  # DONE
 
 
 # snakemake --cores=all -p results/511145/predictions/GCF_000005845.2_ASM584v2_genomic_predictions.tsv
-rule main:  # DONE
+rule main:
     input:
         rules.parse_gff.output,
         rules.predict_operons.output
