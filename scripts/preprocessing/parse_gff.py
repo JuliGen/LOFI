@@ -6,9 +6,10 @@ from BCBio import GFF
 
 def parse_gff(path: str) -> pd.DataFrame:
     """
-    Parses file.gff from given path.
+    Parses .gff3 file from given path.
+
     :param path: path to file
-    :return: pd.DataFrame with the columns necessary for subsequent analysis
+    :return: table with the columns necessary for subsequent analysis
     """
     info = []
     limit_info = dict(gff_type=["CDS"])
@@ -45,8 +46,8 @@ def parse_args():
         usage="parse_gff.py --input-gff FILE.GFF3 --output-gff PARSED_FILE.TSV",
         description="""Parses .gff3 file with annotation obtained by bakta.""",
     )
-    parser.add_argument("-i", "--input-gff", nargs="?", help="gff_file_to_parse.gff3")
-    parser.add_argument("-o", "--output-gff", nargs="?", help="parsed_gff_file.tsv")
+    parser.add_argument("-i", "--input-gff", nargs="?", help="gff file to parse.gff3")
+    parser.add_argument("-o", "--output-gff", nargs="?", help="parsed gff file.tsv")
 
     return parser.parse_args()
 

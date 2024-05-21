@@ -11,7 +11,7 @@ def download_string_files(taxon_id: int) -> None:
     Downloads and unzips a protein score table and protein sequences
     for provided taxon_id from the STRING database.
 
-    :param taxon_id: taxon_id for species
+    :param taxon_id: taxon_id for analyzing species
     """
     db_version = "v12.0"
     keywords = [["sequences", "fa"], ["links", "txt"]]
@@ -26,7 +26,7 @@ def download_string_files(taxon_id: int) -> None:
 
     os.makedirs(
         output_dir, exist_ok=True
-    )  # if not os.exists(output_dir) doesn't work with snakemake
+    )  # `if not os.exists(output_dir)` doesn't work with snakemake
 
     for url in urls:
         wget.download(url, out=output_dir, bar=None)
@@ -48,7 +48,7 @@ def parse_args():
         usage="download_string_files.py --taxid TAXON_ID",
         description="""Downloads files for subsequent analysis from the STRING database.""",
     )
-    parser.add_argument("--taxid", nargs="?", help="taxon_id")
+    parser.add_argument("--taxid", nargs="1", help="taxon_id")
 
     return parser.parse_args()
 

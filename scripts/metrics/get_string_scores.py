@@ -11,7 +11,7 @@ def get_score_from_df_subset(df_subset: pd.DataFrame, id: str) -> int:
 
     :param df_subset: subset of data from the protein_links table for a specific protein id
     :param id: the second id for the protein that needs to be matched with the first one from df_subset
-    :return:
+    :return: combined_score
     """
     try:
         score = df_subset.query("protein2 == @id").combined_score.iloc[0]
@@ -26,14 +26,14 @@ def get_string_scores(
     protein_links: pd.DataFrame,
 ) -> pd.DataFrame:
     """
-    Predicts the presence of a gene in an operon based on a score from the STRING database at a given threshold.
+    Creates table with combined STRING scores for previous, current and next proteins.
 
-    :param parsed_gff: parsed file.gff3 with annotation - the result of the parse_gff function
+    :param parsed_gff: parsed gff3 annotation
     :param diamond_result_filtered: unique values from Diamond alignment
-    :param protein_links: pd.DataFrame with protein combined scores: the result of get_protein_links function
-    :return: pd.Series with predictions for each gene
+    :param protein_links: table with protein combined scores
+    :return: table with scores for each gene
     """
-    # FIXME (for now contigs must be in the correct order)
+    # for now contigs must be in the correct order)
     final_scores = []
     next_scores = []
     prev_scores = []
@@ -99,21 +99,21 @@ def get_string_scores(
 def parse_args():
     parser = argparse.ArgumentParser(
         usage="get_string_scores.py \
-        --parsed-gff PARSED_FILE.TSV \
+        --parsed-gff PARSED_GFF.TSV \
         --filtered-diamond-result FILTERED_DIAMOND_RESULT.TSV \
         --protein-links PROTEIN_LINKS.TXT \
         --output STRING_SCORES.TSV",
-        description="""Parses .gff3 file with annotation obtained by bakta.""",
+        description="""Gets STRING scores for each protein in parsed gff file.""",
     )
-    parser.add_argument("--parsed-gff", nargs="?", help="parsed gff file.tsv")
+    parser.add_argument("--parsed-gff", nargs="1", help="parsed gff file.tsv")
     parser.add_argument(
-        "--filtered-diamond-result", nargs="?", help="filtered diamond result.tsv"
-    )
-    parser.add_argument(
-        "--protein-links", nargs="?", help="protein links from STRING db.txt"
+        "--filtered-diamond-result", nargs="1", help="filtered diamond result.tsv"
     )
     parser.add_argument(
-        "-o", "--output", nargs="?", help="result file with obtained STRING scores.txt"
+        "--protein-links", nargs="1", help="protein links from STRING db.txt"
+    )
+    parser.add_argument(
+        "-o", "--output", nargs="1", help="result file with obtained STRING scores.tsv"
     )
 
     return parser.parse_args()

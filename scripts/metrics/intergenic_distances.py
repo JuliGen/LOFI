@@ -8,6 +8,7 @@ from hmmlearn import hmm
 def calculate_intergenic_dist(parsed_gff: pd.DataFrame) -> pd.DataFrame:
     """
     Counts the distance between genes.
+
     :param parsed_gff: parsed gff file
     :return: table with additional columns (intergenic_distance_next - the distance to the next gene,
     intergenic_distance_prev - the distance to the previous gene)
@@ -59,6 +60,7 @@ def predict_operon_inter_dist(
 ) -> pd.Series:
     """
     Calculates the оperon score for genes based on the intergenic distance.
+
     :param df_inter_dist: pd.DataFrame
     :return: operonic predictions for each gene
     """
@@ -82,14 +84,14 @@ def predict_operon_inter_dist(
 def parse_args():
     parser = argparse.ArgumentParser(
         usage="intergenic_distances.py --input PARSED_GFF.TSV --emission-matrix PATH_TO_MATRIX.NPY --output RESULT.TSV",
-        description="""TODO""",
+        description="""Gets hidden states based on intergenic distance for HMM.""",
     )
-    parser.add_argument("-i", "--input", nargs="?", help="parsed gff file.tsv")
+    parser.add_argument("-i", "--input", nargs="1", help="parsed gff file.tsv")
     parser.add_argument(
-        "-o", "--output", nargs="?", help="path to intergenic distances result file.tsv"
+        "--emission-matrix", nargs="1", help="path to emission matrix.npy"
     )
     parser.add_argument(
-        "--emission-matrix", nargs="?", help="path to emission matrix.npy"
+        "-o", "--output", nargs="1", help="path to intergenic distances result file.tsv"
     )
 
     return parser.parse_args()

@@ -4,19 +4,22 @@ import numpy as np
 import pandas as pd
 
 
-def format_output(genome, taxon_id, predictions):  # TODO add other metrics
+def format_output(
+    genome: str, taxon_id: int, predictions: pd.DataFrame
+) -> pd.DataFrame:
+    """
+    Creates final table with results of operons predictions.
 
+    :param genome: input genome fasta file
+    :param taxon_id: NCBI taxon id
+    :param predictions: file with predictions
+    :return: table with final results
+    """
     parsed_gff = pd.read_csv(f"results/{taxon_id}/bakta/{genome}_parsed.tsv", sep="\t")
     parsed_gff.drop(columns=parsed_gff.columns[0], axis=1, inplace=True)
     predictions.drop(columns=predictions.columns[0], axis=1, inplace=True)
 
-    # final_table_1 = parsed_gff.copy()
-    # final_table_1["prediction"] = predictions
-    # final_table_1.prediction = final_table_1.prediction.replace(
-    #    [1, 0], ["operon", "non_operon"]
-    # )
-
-    final_table_2 = parsed_gff.copy()
+    final_table = parsed_gff.copy()
     kegg_annotation = pd.read_csv(
         f"results/{taxon_id}/predictions/temp_dir/{taxon_id}_{genome}_kegg.tsv",
         sep="\t",
@@ -26,20 +29,20 @@ def format_output(genome, taxon_id, predictions):  # TODO add other metrics
         sep="\t",
     )
 
-    final_table_2["kegg_orthology"] = kegg_annotation["kegg_orthology"]
-    final_table_2["metabolic_pathway_kegg"] = kegg_annotation[
+    final_table["kegg_orthology"] = kegg_annotation["kegg_orthology"]
+    final_table["metabolic_pathway_kegg"] = kegg_annotation[
         "metabolic_pathway_kegg"
     ].replace(np.nan, "")
-    final_table_2["description_kegg"] = kegg_annotation["description_kegg"]
-    final_table_2["prediction"] = predictions
+    final_table["description_kegg"] = kegg_annotation["description_kegg"]
+    final_table["prediction"] = predictions
 
     current_operon = 1
     dict_operons = {1: []}
-    for i in range(len(final_table_2) - 1):
-        if final_table_2["prediction"].iloc[i] == 1:
+    for i in range(len(final_table) - 1):
+        if final_table["prediction"].iloc[i] == 1:
             dict_operons[current_operon].append(i)
-            map_current_gene = final_table_2["metabolic_pathway_kegg"].iloc[i]
-            map_next_gene = final_table_2["metabolic_pathway_kegg"].iloc[i + 1]
+            map_current_gene = final_table["metabolic_pathway_kegg"].iloc[i]
+            map_next_gene = final_table["metabolic_pathway_kegg"].iloc[i + 1]
             string_next_gene = string_result["next_scores"].iloc[i]
             if (
                 string_next_gene < 810
@@ -49,27 +52,27 @@ def format_output(genome, taxon_id, predictions):  # TODO add other metrics
                     )
                 )
                 < 1
-            ) or final_table_2["prediction"].iloc[i + 1] == 0:
+            ) or final_table["prediction"].iloc[i + 1] == 0:
                 current_operon += 1
                 dict_operons[current_operon] = []
 
-    final_table_2.insert(loc=0, column="operon_number", value="non_operon")
+    final_table.insert(loc=0, column="operon_number", value="non_operon")
 
     for operon_number, index_cds in dict_operons.items():
-        final_table_2.loc[index_cds, "operon_number"] = f"operon_{operon_number}"
+        final_table.loc[index_cds, "operon_number"] = f"operon_{operon_number}"
 
-    final_table_2 = final_table_2.drop(["prediction", "strand"], axis=1)
+    final_table = final_table.drop(["prediction", "strand"], axis=1)
 
-    return final_table_2
+    return final_table
 
 
 def parse_args():
     parser = argparse.ArgumentParser(
         usage="main.py --genome GENOME.FNA --taxid TAXON_ID",
-        description="""TODO""",
+        description="""Starts operon prediction pipeline.""",
     )
-    parser.add_argument("--taxid", nargs="?", help="taxon_id")
-    parser.add_argument("--genome", nargs="?", help="genome.fna")
+    parser.add_argument("--genome", nargs="1", help="genome.fna")
+    parser.add_argument("--taxid", nargs="1", help="ncbi taxon id")
 
     return parser.parse_args()
 

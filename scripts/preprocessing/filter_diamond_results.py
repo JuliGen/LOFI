@@ -4,6 +4,12 @@ import pandas as pd
 
 
 def filter_diamond_results(path: str) -> pd.DataFrame:
+    """
+    Filters results after Diamond alignment.
+
+    :param path: file path to diamond alignment
+    :return: filtered table
+    """
     column_names = [
         "query_accession",
         "target_accession",
@@ -29,11 +35,11 @@ def filter_diamond_results(path: str) -> pd.DataFrame:
 def parse_args():
     parser = argparse.ArgumentParser(
         usage="filter_diamond_results.py --input DIAMOND_RESULT.TSV --output FILTERED_DIAMOND_RESULT.TSV",
-        description="""TODO""",
+        description="""Filters results after Diamond alignment.""",
     )
-    parser.add_argument("-i", "--input", nargs="?", help="diamond result file.tsv")
+    parser.add_argument("-i", "--input", nargs="1", help="diamond result file.tsv")
     parser.add_argument(
-        "-o", "--output", nargs="?", help="filtered diamond result file.tsv"
+        "-o", "--output", nargs="1", help="filtered diamond result file.tsv"
     )
 
     return parser.parse_args()

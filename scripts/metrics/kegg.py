@@ -9,14 +9,12 @@ def get_ko_map(
     path_hmm_result: str, path_to_ko_map: str = "data/ko_map.json"
 ) -> Tuple[Dict[str, List[str]], Dict[str, List[str]]]:
     """
-    Gets information about KO and metabolic pathways for each protein_id
-    :param path_to_ko_map:
-    :param path_hmm_result: path to hmm result file (after kofam scan)
-    :return:
-    dict_ko: dict with KO for each protein_id
-    dict_map: dict with metabolic pathways for each protein_id
-    """
+    Gets information about KO and metabolic pathways for each protein_id.
 
+    :param path_to_ko_map: .json KO map file
+    :param path_hmm_result: path to hmm result file (after kofam scan)
+    :return: dict with KO for each protein_id, dict with metabolic pathways for each protein_id
+    """
     with open(path_to_ko_map, "r", encoding="utf-8") as fh:
         ko_map = json.load(fh)
     dict_ko = {}
@@ -44,11 +42,13 @@ def calc_intersection_map(
     path_to_ko_desc: str = "data/ko_descriptions.json",
 ) -> pd.DataFrame:
     """
-    Counts the number of matches between metabolic pathways
-    :param parsed_gff: parsed file.gff with annotation: the result of the parse_gff function
-    :return: pd.Series with the number of intersections between metabolic pathways
-    """
+    Counts the number of matches between metabolic pathways.
 
+    :param parsed_gff: parsed file.gff with annotation: the result of the parse_gff function
+    :param path_hmm_result: path to hmm result file (after kofam scan)
+    :param path_to_ko_desc: .json file with KO descriptions
+    :return: table with the number of intersections between metabolic pathways
+    """
     dict_ko, dict_map = get_ko_map(path_hmm_result)
     parsed_gff["ko"] = parsed_gff["locus_name"].map(dict_ko)
     parsed_gff["map"] = parsed_gff["locus_name"].map(dict_map)
@@ -99,15 +99,17 @@ def calc_intersection_map(
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        usage="kegg.py --input_gff PATH_TO_PARSED_GFF_FILE.TSV --input_hmm PATH_TO_HMM_RESULT.txt --output INTERSECTION_MAP_COUNT.tsv",
-        # TODO extension
-        description="""TODO""",
+        usage="kegg.py \
+        --input_gff PARSED_GFF.TSV \
+        --input_hmm PATH_TO_HMM_RESULT.TXT \
+        --output INTERSECTION_MAP_COUNT.TSV",
+        description="""Gets intersection of metabolic pathways for each protein.""",
     )
-    parser.add_argument("-igff", "--input-gff", nargs="?", help="parsed gff file.tsv")
+    parser.add_argument("-igff", "--input-gff", nargs="1", help="parsed gff file.tsv")
     parser.add_argument(
-        "-ihmm", "--input-hmm", nargs="?", help="hmm results after kofam scan.tsv"
+        "-ihmm", "--input-hmm", nargs="1", help="hmm results after kofam scan.tsv"
     )
-    parser.add_argument("-o", "--output", nargs="?", help="path to hmm result file.txt")
+    parser.add_argument("-o", "--output", nargs="1", help="path to hmm result file.txt")
 
     return parser.parse_args()
 

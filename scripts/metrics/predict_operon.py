@@ -6,11 +6,12 @@ import pandas as pd
 
 def predict_operon(model_file: str, data_for_predict: pd.DataFrame) -> pd.Series:
     """
-    :param data_for_predict:
-    :param model_file: path to model
-    :return:pd.Series with predicted operons
-    """
+    Makes predictions using a trained model.
 
+    :param data_for_predict: table with data required for prediction
+    :param model_file: path to model
+    :return: series with predicted operons
+    """
     with open(model_file, "rb") as f:
         model = pickle.load(f)
 
@@ -21,22 +22,22 @@ def predict_operon(model_file: str, data_for_predict: pd.DataFrame) -> pd.Series
 def parse_args():
     parser = argparse.ArgumentParser(
         usage="predict_operon.py"
-              "--parsed-gff PARSED_GFF.TSV"
-              "--string STRING_SCORES.TSV"
-              "--inter-dist INTER_DIST.TSV"
-              "--kegg KEGG.TSV"
-              "--model MODEL.PKL"
-              "--output RESULT.TSV",
-        description="""TODO""",
+        "--parsed-gff PARSED_GFF.TSV"
+        "--string STRING_SCORES.TSV"
+        "--inter-dist INTER_DIST.TSV"
+        "--kegg KEGG.TSV"
+        "--model MODEL.PKL"
+        "--output RESULT.TSV",
+        description="""Makes predictions using a trained RandomForest model.""",
     )
-    parser.add_argument("--parsed-gff", nargs="?", help="path to parsed gff file.tsv")
-    parser.add_argument("--string", nargs="?", help="path to STRING scores.tsv")
+    parser.add_argument("--parsed-gff", nargs="1", help="path to parsed gff file.tsv")
+    parser.add_argument("--string", nargs="1", help="path to STRING scores.tsv")
     parser.add_argument(
-        "--inter-dist", nargs="?", help="path to intergenic distances result file.tsv"
+        "--inter-dist", nargs="1", help="path to intergenic distances result file.tsv"
     )
-    parser.add_argument("--kegg", nargs="?", help="path to kegg result file.npy")
-    parser.add_argument("--model", nargs="?", help="model for predictions.pkl")
-    parser.add_argument("-o", "--output", nargs="?", help="predictions results.tsv")
+    parser.add_argument("--kegg", nargs="1", help="path to kegg result file.npy")
+    parser.add_argument("--model", nargs="1", help="model for predictions.pkl")
+    parser.add_argument("-o", "--output", nargs="1", help="predictions results.tsv")
     return parser.parse_args()
 
 
