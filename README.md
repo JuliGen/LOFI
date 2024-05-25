@@ -1,19 +1,20 @@
-# 👩🏻‍💻LOFI (Locally run Operon Finder based on Integrated metrics) <img src ='https://papik.pro/uploads/posts/2021-12/1639240390_33-papik-pro-p-dinozavr-klipart-33.png' width =400 align="right">
+# 👩🏻‍💻LOFI (Locally run Operon Finder based on Integrated metrics)  <a href=""><img src ='https://drive.google.com/uc?export=view&id=1c0OLbJXtGd3ZQvNOSGUGb6lvS2ngdevB' width =300 align="right"></a>
 > *This repository is for a project to create a tool for searching for operons*
 
-## Warning
-
+\
 Unfortunately, the tool <u>does not currently work</u> on the **macOS** operating system.
 
 All performance tests were carried out on **Ubuntu 22.04 LTS**.
 
 The tool will take up about **12 GB** of disk space.
+<br>
+<br>
 
 ## Description
 
 This tool is designed to predict the location of bacterial genes in an operon based on 3 metrics: 
-**intergenic distance**, **score from the STRING database** and information about metabolic pathways 
-from **KEGG PATHWAY Database**.
+**intergenic distance**, **score from the [STRING](https://string-db.org) database** and information about metabolic pathways 
+from **[KEGG](https://www.kegg.jp) database**.
 
 ## Installation:
 
