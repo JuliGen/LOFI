@@ -21,7 +21,7 @@ from **[KEGG](https://www.kegg.jp) database**.
 Clone this repo and go to created folder: 
 
 ```shell
-git clone git@github.com:JuliGen/LOFI.git && \
+git clone https://github.com/JuliGen/LOFI.git && \
 cd LOFI
 ```
 
@@ -48,12 +48,14 @@ To check if a species is listed in STRING, try looking for it in the file `data/
 If the id is <u>not found</u>, then use the name of the species to find the species closest to yours, available 
 in the STRING database and provide its `taxid`.
 
-All commands are integrated in the snakemake. To start the analysis execute the command from the template below. 
+All commands are integrated in the `snakemake`. To start the analysis execute the command from the **template below**. 
 
-You have to change 2 variables: `taxid` and `genome`, respectively.
+You have to change 2 variables:
+- `taxid`
+- `genome`
 
 Also, if you want to launch **kofam_scan** in parallel while doing pipeline, go to the appropriate rule in `Snakefile`
-and change the `params.threads` variable to the desired one.
+and change the `params.threads` variable to the desired one. Default value is 8.
 
 ```shell
 snakemake --cores=all -p results/{taxid}/predictions/{genome}_predictions.tsv
@@ -64,7 +66,7 @@ Remove `-p` flag to see less comments while analysing.
 ### Example usage
 
 You can download the databases and check if everything is installed correctly using the command below 
-with the [_E. coli K-12_](https://www.ncbi.nlm.nih.gov/datasets/taxonomy/511145/) genome taken from NCBI 
+with the [_E. coli_ K-12](https://www.ncbi.nlm.nih.gov/datasets/taxonomy/511145/) genome taken from NCBI 
 (it is already uploaded to the genomes folder).
 
 ```shell
@@ -77,4 +79,4 @@ Make sure **taxid** is in the file `data/species.v12.0.txt`.
 
 Make sure that the **genome** of the species is located in the `genomes/` folder.
 
-If you encounter any issues or have questions, ~~try to use _E. coli K-12_~~ directly contact the authors for support.
+If you encounter any issues or have questions, ~~try to use _E. coli_ K-12~~ directly contact the authors for support.
