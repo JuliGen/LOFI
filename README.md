@@ -4,7 +4,7 @@
 \
 Unfortunately, the tool <u>does not currently work</u> on the **macOS** operating system.
 
-All performance tests were carried out on **Ubuntu 22.04 LTS**, 16 Gb RAM, 16 threads.
+All performance tests were carried out on **Ubuntu 22.04 LTS**, 16 GB RAM, 16 threads.
 
 The tool will take up about **12 GB** of disk space.
 <br>
