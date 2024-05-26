@@ -194,7 +194,7 @@ rule predict_operons:
     output:
         "results/{taxid}/predictions/temp_dir/{taxid}_{genome}_predictions.tsv"
     params:
-        model="data/model.pkl"
+        model="models/model.pkl"
     shell:
         """
         python3 scripts/metrics/predict_operon.py \
