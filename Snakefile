@@ -59,6 +59,14 @@ rule download_mash:
         shell("tar -xf mash-Linux64-v2.3.tar && rm mash-Linux64-v2.3.tar")
 
 
+# snakemake --cores=all -p databases/mash/refseq.genomes.k21s1000.msh
+rule download_mash_db:
+    output:
+        "databases/mash/refseq.genomes.k21s1000.msh"
+    run:
+        shell("wget -P databases/mash/ https://gembox.cbcb.umd.edu/mash/refseq.genomes.k21s1000.msh")
+
+
 # snakemake --cores=all -p results/511145/diamond/511145.dmnd
 rule diamond_makedb:
     input:
