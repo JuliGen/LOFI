@@ -67,27 +67,16 @@ rule download_mash_db:
         "wget -P databases/mash/ https://gembox.cbcb.umd.edu/mash/refseq.genomes.k21s1000.msh"
 
 
-# snakemake --cores=all -p genomes/GCF_000005845.2_ASM584v2_genomic.fna.msh
-rule run_mash_sketch:
-    input:
-        mash="mash-Linux64-v2.3/mash",
-        genome="genomes/{genome}.fna"
-    output:
-        "genomes/{genome}.fna.msh"
-    shell:
-        "{input.mash} sketch -m 2 {input.genome}"
-
-
 # snakemake --cores=all -p genomes/GCF_000005845.2_ASM584v2_genomic_distances.tab
 rule run_mash_dist:
     input:
         mash="mash-Linux64-v2.3/mash",
-        db=rules.download_mash_db.output,
-        msh=rules.run_mash_sketch.output
+        genome="genomes/{genome}.fna",
+        ref=rules.download_mash_db.output
     output:
         "genomes/{genome}_distances.tab"
     shell:
-        "{input.mash} dist {input.db} {input.msh} > {output}"
+        "{input.mash} dist {input.ref} {input.genome} > {output}"
 
 
 # snakemake --cores=all -p results/511145/diamond/511145.dmnd
