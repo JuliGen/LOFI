@@ -1,5 +1,8 @@
 # Comments represent single launch of rule
 
+EMAIL = "artemvaskaa@gmail.com"
+
+
 # snakemake --cores=all -p databases/db-light
 rule download_db_light:
     output:
@@ -77,6 +80,22 @@ rule run_mash_dist:
         "genomes/{genome}_distances.tab"
     shell:
         "{input.mash} dist {input.ref} {input.genome} > {output}"
+
+
+# snakemake --cores=all -p genomes/GCF_000005845.2_ASM584v2_genomic_distances_sorted.tab
+rule obtain_taxid:
+    input:
+        genome="genomes/{genome}.fna",
+        dist="genomes/{genome}_distances.tab"
+    output:
+        "genomes/{genome}_distances_sorted.tab"
+    shell:
+        """
+        python3 scripts/preprocessing/obtain_taxid.py \
+        --genome {input.genome} \
+        --dist {input.dist} \
+        --email {EMAIL}
+        """
 
 
 # snakemake --cores=all -p results/511145/diamond/511145.dmnd
