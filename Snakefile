@@ -50,6 +50,15 @@ rule download_string_files:
         "python3 scripts/preprocessing/download_string_files.py --taxid {wildcards.taxid}"
 
 
+# snakemake --cores=all -p mash-Linux64-v2.3
+rule download_mash:
+    output:
+        directory("mash-Linux64-v2.3")
+    run:
+        shell("wget https://github.com/marbl/Mash/releases/download/v2.3/mash-Linux64-v2.3.tar")
+        shell("tar -xf mash-Linux64-v2.3.tar && rm mash-Linux64-v2.3.tar")
+
+
 # snakemake --cores=all -p results/511145/diamond/511145.dmnd
 rule diamond_makedb:
     input:
