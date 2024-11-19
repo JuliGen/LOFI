@@ -38,6 +38,8 @@ def obtain_taxid(path_dist_df: str) -> (int, pd.DataFrame):
                           names=["Reference-ID", "Query-ID", "Mash-distance", "P-value", "Matching-hashes"])
 
     dist_df.sort_values(by=["Mash-distance", "P-value"], inplace=True)
+    dist_df["Query-ID"] = dist_df["Query-ID"].str.replace("genomes/", "")
+    dist_df["Reference-ID"] = dist_df["Reference-ID"].str.replace(".gz", "")
 
     accession = "_".join(dist_df["Reference-ID"].iloc[0].split("_")[:2])
     taxid = accession_to_taxid(accession)
