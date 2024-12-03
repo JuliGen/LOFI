@@ -53,7 +53,7 @@ def calc_intersection_map(
     parsed_gff["ko"] = parsed_gff["locus_name"].map(dict_ko)
     parsed_gff["map"] = parsed_gff["locus_name"].map(dict_map)
 
-    map_list = parsed_gff.dropna()["map"].to_list()
+    map_list = parsed_gff["map"].to_list()
     map_list_sh1 = map_list[1:]
     map_list_sh1.append([])
     map_list_sh2 = map_list[:-1]
@@ -66,7 +66,7 @@ def calc_intersection_map(
     for list1, list2 in zip(map_list, map_list_sh2):
         inter_map2.append(len(set(list1).intersection(list2)))
 
-    parsed_gff.loc[parsed_gff.dropna()["map"].index, "intersection_map_count"] = [
+    parsed_gff.loc[parsed_gff["map"].index, "intersection_map_count"] = [
         max(itm) for itm in zip(inter_map, inter_map2)
     ]
 

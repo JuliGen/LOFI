@@ -48,7 +48,7 @@ def calculate_intergenic_dist(parsed_gff: pd.DataFrame) -> pd.DataFrame:
     # Dividing the observed states into categories
     df_inter_dist["cat_dist"] = pd.cut(
         df_inter_dist["intergenic_distance_next"],
-        [i for i in range(-1, 800, 15)] + [10000],
+        [i for i in range(-1, 800, 15)] + [30000],
         labels=[i for i in range(54)],
     )
 
