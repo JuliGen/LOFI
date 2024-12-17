@@ -8,7 +8,8 @@ Run it if you don't know Taxon ID for your species.
 
 Usage %s:
     -g  <name_of_file>
-        genome file name in the LOFI/genomes directory in FASTA format (required).
+        genome file name in the LOFI/genomes directory in FASTA format
+        only '.fna' extension is supported, if you have '.fa' or another, please change in manually (required).
     -h
         help. Shows this message.
 

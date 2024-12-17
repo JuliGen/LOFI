@@ -10,7 +10,7 @@ Usage %s:
         taxon ID for specified genome FASTA file (required).
     -g  <name_of_file>
         genome file name in the LOFI/genomes directory in FASTA format
-        only '.fna' extension, if you have '.fa' or another, please change in manually (required).
+        only '.fna' extension is supported, if you have '.fa' or another, please change in manually (required).
     -f  <force>
         use if you want to rewrite results (optional).
     -h
