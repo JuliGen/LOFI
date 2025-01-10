@@ -80,3 +80,12 @@ Make sure **taxid** is in the file `data/species.v12.0.txt`.
 Make sure that the **genome** of the species is located in the `genomes/` folder.
 
 If you encounter any issues or have questions, ~~try to use _E. coli_ K-12~~ directly contact the authors for support.
+
+## Authors
+
+* Yulia Nechaeva (Perm State University)
+* Artem Vasiliev (Saint Petersburg State University)
+
+*Supervisors*: Oksana Kotovskaya (Skoltech), Nikita Vaulin (Skoltech, vaulin@ro.ru), Nadezhda Pavlova (Lomonosov Moscow State University)
+
+Initial idea was proposed by Polina Kuchur and Alexey Komissarov (ITMO) and researhed by Anna Churkina and Anna Rybina in [[O-antigens](https://github.com/rybinaanya/O-antigens)]
