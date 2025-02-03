@@ -67,7 +67,12 @@ rule download_mash_db:
     output:
         "databases/mash/refseq.genomes.k21s1000.msh"
     shell:
-        "wget -P databases/mash/ https://gembox.cbcb.umd.edu/mash/refseq.genomes.k21s1000.msh"
+        """
+        wget -P databases/mash/ \
+        https://gembox.cbcb.umd.edu/mash/refseq.genomes.k21s1000.msh \
+        --tries=10 \
+        --retry-connrefused
+        """
 
 
 # snakemake --cores=all -p genomes/GCF_000005845.2_ASM584v2_genomic_distances.tab
@@ -176,7 +181,13 @@ rule download_kofam_scan:
     output:
         "kofam_scan-1.3.0/exec_annotation"
     run:
-        shell("wget https://www.genome.jp/ftp/tools/kofam_scan/kofam_scan-1.3.0.tar.gz")
+        shell(
+            """
+            wget https://www.genome.jp/ftp/tools/kofam_scan/kofam_scan-1.3.0.tar.gz \
+            --tries=10 \
+            --retry-connrefused
+            """
+        )
         shell("tar -xzf kofam_scan-1.3.0.tar.gz && rm kofam_scan-1.3.0.tar.gz")
 
 
