@@ -124,7 +124,11 @@ rule bakta_annotation:
     params:
         folder="results/{taxid}/bakta/"
     shell:
-        "bakta --db {input.db} --output {params.folder} {input.genome} --force"
+        """
+        bakta --db {input.db} --output {params.folder} {input.genome} --force \
+        --skip-trna --skip-tmrna --skip-rrna --skip-ncrna --skip-ncrna-region \
+        --skip-crispr --skip-pseudo --skip-sorf --skip-gap --skip-ori --skip-plot
+        """
 
 
 # snakemake --cores=all -p results/511145/diamond/511145.tsv
