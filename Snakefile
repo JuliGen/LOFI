@@ -1,6 +1,9 @@
 # Comments represent single launch of rule
 
-EMAIL = "artemvaskaa@gmail.com"
+# configfile: "config.yaml"
+# print("Config is: ", config)
+
+EMAIL = "****@example.com"
 
 
 # snakemake --cores=all -p databases/db-light
@@ -79,7 +82,7 @@ rule download_mash_db:
 rule run_mash_dist:
     input:
         mash="mash-Linux64-v2.3/mash",
-        genome="genomes/{genome}.fna",
+        genome="genomes/{genome}.fna", #FIXME
         ref=rules.download_mash_db.output
     output:
         "genomes/{genome}_distances.tab"

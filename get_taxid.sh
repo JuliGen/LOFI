@@ -35,6 +35,8 @@ while getopts ':g:h?' flag; do
 if [ "$snake" ] # avoiding positional arguments
 then
   genome=${genome%.*} # removes extension to work with snakemake rule
+#  snakemake --configfile=config.yaml --cores=all -p genomes/"${genome}"_distances.tab --force # force to recalculate distances
+#  snakemake --configfile=config.yaml --cores=all -p genomes/"${genome}"_distances_sorted.tab --force # force to obtain taxid with used genome
   snakemake --cores=all -p genomes/"${genome}"_distances.tab --force # force to recalculate distances
   snakemake --cores=all -p genomes/"${genome}"_distances_sorted.tab --force # force to obtain taxid with used genome
 else
