@@ -36,48 +36,68 @@ mamba activate lofi
 
 The first run will take longer than subsequent runs due to the loading of the databases required for analysis.
 
-As input, you must provide a `FASTA file` with the **nucleotide sequence** of the bacterial genome in the `.fna` format 
-(if you have a different extension, please <u>change it manually</u>). 
-Contigs within a FASTA file are expected to be in the **correct order**.
+Bash scripts are used to perform all stages of the analysis (downloading the required databases, searching for Taxon ID and predicting operons). However, all the basic commands are implemented using snakemake.
+
+First of all, you need to download all the necessary databases. Before reading further, it is recommended to run this command:
+
+```shell
+./download_dbs_tools.sh
+```
+
+- In case of errors, simply run the command again. Unfortunately, sometimes there is a problem with the servers, which means you will have to wait until they are fixed at the source.
+
+As input, you must provide a `FASTA file` with the **nucleotide sequence** of the bacterial genome in the `.fna` format (if you have a different extension, please <u>change it manually</u>). Contigs within a FASTA file are expected to be in the **correct order**.
 
 **File with sequence must be in the `genomes` folder**.
 
-It is also necessary to provide the `taxid` of the species being researched. 
-For proper operation of the tool, this id must be in the **STRING database**. 
-To check if a species is listed in STRING, try looking for it in the file `data/species.v12.0.txt`.
-If the id is <u>not found</u>, then use the name of the species to find the species closest to yours, available 
-in the STRING database and provide its `taxid`.
+As an example of using the tool, we will use a file with the *Escherichia coli K-12* genome, which is already in the genomes folder.
 
-All commands are integrated in the `snakemake`. To start the analysis execute the command from the **template below**. 
+It is also necessary to provide the `taxid` of the species being researched. For proper operation of the tool, this ID must be in the **STRING database**.
 
-You have to change 2 variables:
-- `taxid`
-- `genome`
-
-Also, if you want to launch **kofam_scan** in parallel while doing pipeline, go to the appropriate rule in `Snakefile`
-and change the `params.threads` variable to the desired one. Default value is 8.
+If you don't know the `taxid`, you can use the following command, where the input is the same `genome` file as in the main analysis:
 
 ```shell
-snakemake --cores=all -p results/{taxid}/predictions/{genome}_predictions.tsv
+./get_taxid.sh -g <genome>
 ```
 
-Remove `-p` flag to see less comments while analysing.
+To start the prediction, use the command below:
+
+```shell
+./start_prediction.sh -t <taxid> -g <genome> -f
+```
+
+The `-f` (force) flag is used to overwrite the prediction.
 
 ### Example usage
 
-You can download the databases and check if everything is installed correctly using the command below 
-with the [_E. coli_ K-12](https://www.ncbi.nlm.nih.gov/datasets/taxonomy/511145/) genome taken from NCBI 
-(it is already uploaded to the genomes folder).
+The [_E. coli_ K-12](https://www.ncbi.nlm.nih.gov/datasets/taxonomy/511145/) genome, which is already uploaded to the `genomes` folder, is used as an example.
+
+Downloading DBs:
 
 ```shell
-snakemake --cores=all -p results/511145/predictions/GCF_000005845.2_ASM584v2_genomic_predictions.tsv
+./download_dbs_tools.sh
 ```
+
+Obtaining Taxon ID:
+
+```shell
+./get_taxid.sh -g GCF_000005845.2_ASM584v2_genomic.fna
+```
+
+Predicting operons:
+
+```shell
+./start_prediction.sh -t 511145 -g GCF_000005845.2_ASM584v2_genomic.fna -f
+```
+
+- If you want to launch **kofam_scan** in parallel while doing pipeline, go to the appropriate rule in `Snakefile` and change the `params.threads` variable to the desired one. Default value is 8.
+- If you want to change the email to your own (currently it is set to a generic one), go to the `Snakefile` and change the global variable at the beginning.
 
 ## Troubleshooting
 
-Make sure **taxid** is in the file `data/species.v12.0.txt`.
+Make sure **taxid** is in the file `data/species.v12.0.txt`, that is, it is in the STRING database.
 
-Make sure that the **genome** of the species is located in the `genomes/` folder.
+Make sure that the **genome** of the species is located in the `genomes` folder.
 
 If you encounter any issues or have questions, ~~try to use _E. coli_ K-12~~ directly contact the authors for support.
 
