@@ -66,6 +66,28 @@ def format_output(
     return final_table
 
 
+def result_to_gff(path_gff: str, path_tsv: str, output_filename: str) -> None:
+    """
+    Adds additional qualifier with operon prediction to .gff3 file annotated by bakta.
+
+    :param path_gff: path to file with annotation
+    :param path_tsv: path to file with operon prediction results
+    :param output_filename: output filename
+    """
+    df_tsv = pd.read_csv(path_tsv, sep="\t")
+
+    rows_to_keep = list(range(8, df_tsv.shape[0]+9))  #FIXME borders (left=comment, right=comment_length + 1 region)
+    df_gff = pd.read_csv(path_gff, sep="\t", header=None, skiprows=lambda x: x not in rows_to_keep)
+
+    for i in range(df_gff.shape[0]):
+        if df_gff.iloc[i][2] == "CDS":
+            locus_tag = df_gff.iloc[i][8].split(";")[0][3:]
+            operon_info = df_tsv.query("locus_name == @locus_tag").operon_number.iloc[0]
+            df_gff.iloc[i, 8] = f"{df_gff.iloc[i][8]};operon_info={operon_info}"
+
+    df_gff.to_csv(output_filename, sep="\t", header=False, index=False)
+
+
 def parse_args():
     parser = argparse.ArgumentParser(
         usage="main.py --genome GENOME.FNA --taxid TAXON_ID",
@@ -86,10 +108,16 @@ if __name__ == "__main__":
         sep="\t",
     )
     final_table = format_output(genome, taxon_id, predictions)
-    output_filename = f"results/{taxon_id}/predictions/{genome}_predictions.tsv"
+
+    raw_filename_gff = f"results/{taxon_id}/bakta/{taxon_id}.gff3"
+    output_filename_tsv = f"results/{taxon_id}/predictions/{genome}_predictions.tsv"
+    output_filename_gff = f"results/{taxon_id}/predictions/{genome}_predictions.gff3"
+
     final_table.to_csv(
-        output_filename,
+        output_filename_tsv,
         sep="\t",
     )
 
-    print(f"Job is done! Prediction results are in the folder {output_filename}")
+    result_to_gff(raw_filename_gff, output_filename_tsv, output_filename_gff)
+
+    print(f"Job is done! Prediction results are in the folder results/{taxon_id}/predictions/")
