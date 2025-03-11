@@ -61,10 +61,16 @@ def calc_intersection_map(
 
     inter_map = []
     for list1, list2 in zip(map_list, map_list_sh1):
-        inter_map.append(len(set(list1).intersection(list2)))
+        try:
+            inter_map.append(len(set(list1).intersection(list2)))
+        except TypeError:
+            inter_map.append(0)
     inter_map2 = []
     for list1, list2 in zip(map_list, map_list_sh2):
-        inter_map2.append(len(set(list1).intersection(list2)))
+        try:
+            inter_map2.append(len(set(list1).intersection(list2)))
+        except TypeError:
+            inter_map2.append(0)
 
     parsed_gff.loc[parsed_gff["map"].index, "intersection_map_count"] = [
         max(itm) for itm in zip(inter_map, inter_map2)
