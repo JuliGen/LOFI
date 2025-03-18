@@ -109,7 +109,7 @@ if __name__ == "__main__":
     )
     final_table = format_output(genome, taxon_id, predictions)
 
-    raw_filename_gff = f"results/{taxon_id}/bakta/{taxon_id}.gff3"
+    raw_filename_gff = f"results/{taxon_id}/bakta/{genome}.gff3"
     output_filename_tsv = f"results/{taxon_id}/predictions/{genome}_predictions.tsv"
     output_filename_gff = f"results/{taxon_id}/predictions/{genome}_predictions.gff3"
 
