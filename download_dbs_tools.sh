@@ -31,7 +31,6 @@ databases/db-light \
 databases/ko_list \
 databases/profiles/prokaryote.hal \
 databases/mash/refseq.genomes.k21s1000.msh \
-mash-Linux64-v2.3 \
 kofam_scan-1.3.0/exec_annotation
 
 #snakemake --cores=all databases/db-light # download_db_light
