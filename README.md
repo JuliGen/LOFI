@@ -40,6 +40,7 @@ mamba activate lofi
 git clone https://github.com/oschwengers/bakta.git
 cd bakta
 python setup.py install
+cd ../
 ```
 
 ## Usage
