@@ -2,8 +2,6 @@
 > *This repository is for a project to create a tool for searching for operons*
 
 \
-Unfortunately, the tool <u>does not currently work</u> on the **macOS** operating system.
-
 All performance tests were carried out on **Ubuntu 22.04 LTS**, 16 GB RAM, 16 threads.
 
 The tool will take up about **12 GB** of disk space.
@@ -27,9 +25,21 @@ cd LOFI
 
 Create mamba environment from `environment.yaml` and activate it:
 
+**Linux:**
 ```shell
-mamba env create -f environment.yaml && \
+mamba env create -f environment_linux.yaml && \
 mamba activate lofi
+```
+**MacOS:**
+```shell
+mamba env create -f environment_macos.yaml && \
+mamba activate lofi
+
+#Install bakta (Required. You need to install BAKTA separately, because at the moment it is not possible to install it using mamba or conda.
+#If you already have BAKTA, you can skip this step.)
+git clone https://github.com/oschwengers/bakta.git
+cd bakta
+python setup.py install
 ```
 
 ## Usage
