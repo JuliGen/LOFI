@@ -9,10 +9,9 @@ dependencies:
   - python=3.11
   - pip=25.1
   - snakemake=7.32.4
+  - diamond=2.1
   - pip:
       - biopython==1.85
-      - libzlib==1.3
-      - diamond==2.1
       - bcbio-gff==0.7.1
       - gdown==5.2.0
       - hmmlearn==0.3.3
