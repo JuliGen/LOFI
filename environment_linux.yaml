@@ -9,7 +9,7 @@ dependencies:
   - python=3.11
   - pip=25.1
   - snakemake=7.32.4
-  - diamond==2.1
+  - diamond==2.1.11
   - pip:
       - bcbio-gff==0.7.1
       - biopython==1.85
