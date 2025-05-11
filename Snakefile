@@ -56,13 +56,13 @@ rule download_string_files:
         "python3 scripts/preprocessing/download_string_files.py --taxid {wildcards.taxid}"
 
 
-# snakemake --cores=all -p mash-Linux64-v2.3
-rule download_mash:
-    output:
-        directory("mash-Linux64-v2.3")
-    run:
-        shell("wget https://github.com/marbl/Mash/releases/download/v2.3/mash-Linux64-v2.3.tar")
-        shell("tar -xf mash-Linux64-v2.3.tar && rm mash-Linux64-v2.3.tar")
+# # snakemake --cores=all -p mash-Linux64-v2.3
+# rule download_mash:
+#     output:
+#         directory("mash-Linux64-v2.3")
+#     run:
+#         shell("wget https://github.com/marbl/Mash/releases/download/v2.3/mash-Linux64-v2.3.tar")
+#         shell("tar -xf mash-Linux64-v2.3.tar && rm mash-Linux64-v2.3.tar")
 
 
 # snakemake --cores=all -p databases/mash/refseq.genomes.k21s1000.msh
@@ -81,13 +81,12 @@ rule download_mash_db:
 # snakemake --cores=all -p genomes/GCF_000005845.2_ASM584v2_genomic_distances.tab
 rule run_mash_dist:
     input:
-        mash="mash-Linux64-v2.3/mash",
         genome="genomes/{genome}.fna", #FIXME
         ref=rules.download_mash_db.output
     output:
         "genomes/{genome}_distances.tab"
     shell:
-        "{input.mash} dist {input.ref} {input.genome} > {output}"
+        "mash dist {input.ref} {input.genome} > {output}"
 
 
 # snakemake --cores=all -p genomes/GCF_000005845.2_ASM584v2_genomic_distances_sorted.tab
